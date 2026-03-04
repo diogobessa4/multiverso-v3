@@ -243,9 +243,9 @@
   <div class="section-label">// A Loja</div>
   <div class="section-title">Venha nos <span>visitar</span></div>
   <div class="info-grid">
-    <div class="info-card"><div class="info-icon">📍</div><div class="info-title">Localização</div><div class="info-txt"><span class="hl">Taquara, Rio de Janeiro</span><br>Zona Oeste do Rio de Janeiro, RJ</div></div>
-    <div class="info-card"><div class="info-icon">🕐</div><div class="info-title">Horário</div><div class="info-txt"><span class="hl">Seg – Sex:</span> 10h às 20h<br><span class="hl">Sábado:</span> 10h às 18h<br><span class="hl">Domingo:</span> Fechado</div></div>
-    <div class="info-card"><div class="info-icon">📱</div><div class="info-title">Contato</div><div class="info-txt"><span class="hl">WhatsApp:</span> (21) 9 XXXX-XXXX<br><span class="hl">Instagram:</span> @multiversotaquara</div></div>
+    <div class="info-card"><div class="info-icon">📍</div><div class="info-title">Localização</div><div class="info-txt"><span class="hl">Av. Nelson Cardoso, 905</span><br>Loja 109, Unicenter II<br>Taquara, RJ — CEP 22730-001</div></div>
+    <div class="info-card"><div class="info-icon">🕐</div><div class="info-title">Horário</div><div class="info-txt"><span class="hl">Seg – Sex:</span> 10h às 19h<br><span class="hl">Sábado:</span> 10h às 16h<br><span class="hl">Domingo:</span> Fechado</div></div>
+    <div class="info-card"><div class="info-icon">📱</div><div class="info-title">Contato</div><div class="info-txt"><span class="hl">WhatsApp:</span> <a href="https://wa.me/5521987194908" target="_blank" style="color:var(--neon);text-decoration:none;">(21) 98719-4908</a><br><span class="hl">Instagram:</span> @multiversotaquara</div></div>
     <div class="info-card"><div class="info-icon">📦</div><div class="info-title">Como Reservar</div><div class="info-txt">Reserve online, retire em até <span class="hl">3 dias úteis</span>. Gratuito, sem compromisso de compra.</div></div>
   </div>
 </div>
@@ -465,7 +465,7 @@
 
       document.getElementById('successCodigo').textContent = codigo;
       const wppMsg = encodeURIComponent(`Olá! Acabei de fazer uma reserva na Multiverso.\n\n📦 Produto: ${produtoAtual.nome}\n🔑 Código: ${codigo}\n📅 Retirada: ${new Date(data+'T12:00').toLocaleDateString('pt-BR')}\n👤 Nome: ${nome}`);
-      document.getElementById('wppLink').href = `https://wa.me/55219XXXXXXXX?text=${wppMsg}`;
+      document.getElementById('wppLink').href = `https://wa.me/5521987194908?text=${wppMsg}`;
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('successScreen').classList.add('show');
     } catch(e) {
