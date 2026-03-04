@@ -51,7 +51,7 @@ Ou use a extensão **Live Server** no VS Code (recomendado).
 
 ### 4. Acessar o painel admin
 
-Abra `frontend/admin/index.html` e entre com a senha: **multiverso2025**
+Abra `frontend/admin/index.html` e entre com a senha
 
 ---
 
@@ -107,13 +107,3 @@ Para trocar a senha do admin, edite diretamente no SQLite:
 ```sql
 UPDATE admin_config SET valor = 'nova_senha' WHERE chave = 'admin_password';
 ```
-
----
-
-## 🔜 Próximas melhorias sugeridas
-
-- [ ] Integração com WhatsApp Business API para confirmação automática
-- [ ] Upload de imagens reais dos produtos
-- [ ] Deploy no Railway, Render ou VPS
-- [ ] Autenticação com JWT para maior segurança
-- [ ] Histórico de alterações de status (log de auditoria)
