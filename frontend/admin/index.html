@@ -20,8 +20,7 @@
     .login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--neon),var(--neon3),var(--neon2));}
     .login-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:2rem;color:var(--neon);text-shadow:0 0 25px var(--neon);letter-spacing:2px;margin-bottom:.25rem;}
     .login-logo span{color:var(--neon2);}
-    .login-sub{color:var(--muted);font-size:.72rem;margin-bottom:.5rem;letter-spacing:3px;text-transform:uppercase;}
-    .login-divider{width:40px;height:1px;background:var(--border);margin:.75rem auto 2rem;}
+    .login-sub{color:var(--muted);font-size:.72rem;margin-bottom:2rem;letter-spacing:3px;text-transform:uppercase;}
     .acesso-negado{display:none;background:rgba(255,62,108,.08);border:1px solid rgba(255,62,108,.3);padding:1rem;margin-bottom:1rem;color:var(--neon2);font-size:.82rem;line-height:1.5;}
     .acesso-negado.show{display:block;}
     .layout{display:none;min-height:100vh;}
@@ -46,11 +45,11 @@
     .topbar-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:#fff;}
     .topbar-sub{font-size:.78rem;color:var(--muted);}
     .content{padding:2rem;flex:1;}
-    .tab{display:none;} .tab.active{display:block;}
+    .tab{display:none;}.tab.active{display:block;}
     .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem;}
     .stat{background:var(--card);border:1px solid var(--border);padding:1.5rem;position:relative;overflow:hidden;}
     .stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-    .stat.blue::after{background:var(--neon);} .stat.green::after{background:var(--success);} .stat.yellow::after{background:var(--gold);} .stat.red::after{background:var(--neon2);} .stat.purple::after{background:var(--neon3);}
+    .stat.blue::after{background:var(--neon);}.stat.green::after{background:var(--success);}.stat.yellow::after{background:var(--gold);}.stat.red::after{background:var(--neon2);}.stat.purple::after{background:var(--neon3);}
     .stat-icon{font-size:1.5rem;margin-bottom:.75rem;}
     .stat-val{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:#fff;}
     .stat-lbl{font-size:.72rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:.25rem;}
@@ -60,7 +59,7 @@
     table{width:100%;border-collapse:collapse;}
     th{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--neon);text-align:left;padding:10px 16px;background:rgba(0,212,255,.03);border-bottom:1px solid var(--border);}
     td{padding:12px 16px;border-bottom:1px solid rgba(30,58,95,.4);font-size:.84rem;vertical-align:middle;}
-    tr:hover td{background:rgba(0,212,255,.02);} tr:last-child td{border-bottom:none;}
+    tr:hover td{background:rgba(0,212,255,.02);}tr:last-child td{border-bottom:none;}
     .sb{font-family:'Orbitron',monospace;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;}
     .sp{background:rgba(251,191,36,.15);color:var(--gold);border:1px solid rgba(251,191,36,.3);}
     .sc{background:rgba(34,197,94,.15);color:var(--success);border:1px solid rgba(34,197,94,.3);}
@@ -68,11 +67,11 @@
     .sd{background:rgba(168,85,247,.15);color:var(--neon3);border:1px solid rgba(168,85,247,.3);}
     .filters{display:flex;gap:.6rem;flex-wrap:wrap;}
     .fbtn{background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:'Orbitron',monospace;font-size:.62rem;letter-spacing:1px;text-transform:uppercase;padding:7px 14px;cursor:pointer;transition:all .2s;}
-    .fbtn:hover{border-color:var(--neon);color:var(--neon);} .fbtn.active{background:rgba(0,212,255,.1);border-color:var(--neon);color:var(--neon);}
+    .fbtn:hover{border-color:var(--neon);color:var(--neon);}.fbtn.active{background:rgba(0,212,255,.1);border-color:var(--neon);color:var(--neon);}
     .fg{margin-bottom:1.25rem;}
     .fl{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--neon);margin-bottom:.5rem;font-family:'Orbitron',monospace;}
     .fi,.fs,.ft{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Exo 2',sans-serif;font-size:.9rem;padding:11px 14px;outline:none;transition:border-color .2s;}
-    .fi:focus,.fs:focus,.ft:focus{border-color:var(--neon3);} .fs option{background:var(--bg2);} .ft{resize:vertical;min-height:70px;}
+    .fi:focus,.fs:focus,.ft:focus{border-color:var(--neon3);}.fs option{background:var(--bg2);}.ft{resize:vertical;min-height:70px;}
     .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
     .btn{font-family:'Orbitron',monospace;font-weight:700;font-size:.7rem;letter-spacing:1px;text-transform:uppercase;padding:10px 20px;border:none;cursor:pointer;transition:all .2s;}
     .btn-neon{background:var(--neon);color:#000;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);}
@@ -82,12 +81,10 @@
     .btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border);}
     .btn-ghost:hover{border-color:var(--neon);color:var(--neon);}
     .btn-danger{background:transparent;color:var(--neon2);border:1px solid var(--neon2);padding:6px 12px;font-size:.6rem;}
-    .btn-danger:hover{background:var(--neon2);color:#fff;} .btn-sm{padding:6px 12px;font-size:.62rem;}
-    .btn-google{width:100%;background:#fff;color:#333;font-family:'Exo 2',sans-serif;font-size:.95rem;font-weight:600;padding:13px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.75rem;transition:all .2s;margin-bottom:1rem;}
+    .btn-danger:hover{background:var(--neon2);color:#fff;}.btn-sm{padding:6px 12px;font-size:.62rem;}
+    .btn-google{width:100%;background:#fff;color:#333;font-family:'Exo 2',sans-serif;font-size:.95rem;font-weight:600;padding:13px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.75rem;transition:all .2s;}
     .btn-google:hover{background:#f1f1f1;box-shadow:0 2px 20px rgba(255,255,255,.15);}
     .btn-google svg{width:20px;height:20px;flex-shrink:0;}
-
-
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:3000;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px);}
     .overlay.open{display:flex;}
     .modal{background:var(--bg2);border:1px solid var(--neon);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:mIn .3s ease;}
@@ -95,16 +92,16 @@
     .modal-hd{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
     .modal-title{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:900;color:var(--neon);}
     .modal-close{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;}
-    .modal-close:hover{color:var(--neon2);} .modal-bd{padding:1.5rem;}
+    .modal-close:hover{color:var(--neon2);}.modal-bd{padding:1.5rem;}
     .loader{text-align:center;padding:3rem;color:var(--muted);}
     .spin{display:inline-block;width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--neon);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:.75rem;}
     @keyframes spin{to{transform:rotate(360deg);}}
     .empty{text-align:center;padding:3rem;color:var(--muted);}
-    .err{color:var(--neon2);font-size:.8rem;margin-top:.5rem;} .ok{color:var(--success);font-size:.8rem;margin-top:.5rem;}
+    .err{color:var(--neon2);font-size:.8rem;margin-top:.5rem;}.ok{color:var(--success);font-size:.8rem;margin-top:.5rem;}
     .badge-hot{background:var(--gold);color:#000;font-size:.6rem;padding:2px 8px;font-family:'Orbitron',monospace;font-weight:700;}
     .badge-new{background:var(--neon2);color:#fff;font-size:.6rem;padding:2px 8px;font-family:'Orbitron',monospace;font-weight:700;}
     .badge-limited{background:var(--neon3);color:#fff;font-size:.6rem;padding:2px 8px;font-family:'Orbitron',monospace;font-weight:700;}
-    .stock-ok{color:var(--success);} .stock-low{color:var(--gold);} .stock-zero{color:var(--neon2);}
+    .stock-ok{color:var(--success);}.stock-low{color:var(--gold);}.stock-zero{color:var(--neon2);}
     @media(max-width:768px){.sidebar{display:none;}.fgrid{grid-template-columns:1fr;}}
   </style>
 </head>
@@ -119,13 +116,12 @@
   <div class="login-box">
     <div class="login-logo">MULTI<span>VERSO</span></div>
     <div class="login-sub">// Painel Administrativo</div>
-    <div class="login-divider"></div>
     <div class="acesso-negado" id="acessoNegado">
       Acesso negado para este e-mail.<br>
-      <span id="emailNegado" style="font-weight:700;display:block;margin-top:.4rem"></span>
+      <strong id="emailNegado"></strong><br>
       <button onclick="logout()" style="margin-top:.75rem;background:none;border:1px solid var(--neon2);color:var(--neon2);font-size:.7rem;padding:6px 14px;cursor:pointer;font-family:'Orbitron',monospace">TENTAR OUTRO EMAIL</button>
     </div>
-    <button class="btn-google" id="btnGoogle" onclick="loginGoogle()">
+    <button class="btn-google" onclick="loginGoogle()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
       Entrar com Google
     </button>
@@ -150,14 +146,15 @@
   </aside>
   <div class="main">
     <div class="topbar">
-      <div><div class="topbar-title" id="tTitle">Dashboard</div><div class="topbar-sub" id="tSub">Visão geral da loja</div></div>
-      <button class="btn btn-ghost btn-sm" onclick="recarregar()">↻ Atualizar</button>
+      <div><div class="topbar-title" id="tTitle">Dashboard</div><div class="topbar-sub" id="tSub">Visao geral</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="recarregar()">Atualizar</button>
     </div>
     <div class="content">
       <div class="tab active" id="tab-dashboard">
         <div class="stats" id="statsGrid"><div class="loader"><div class="spin"></div></div></div>
-        <div class="card"><div class="card-hd"><div class="card-title">⚡ Reservas Recentes</div></div>
-        <div style="overflow-x:auto"><table id="tRecentes"><tr><td colspan="5" style="padding:2rem;color:var(--muted)">Carregando...</td></tr></table></div></div>
+        <div class="card"><div class="card-hd"><div class="card-title">Reservas Recentes</div></div>
+          <div style="overflow-x:auto"><table id="tRecentes"><tr><td style="padding:2rem;color:var(--muted)">Carregando...</td></tr></table></div>
+        </div>
       </div>
       <div class="tab" id="tab-reservas">
         <div class="card"><div class="card-hd"><div class="card-title">Todas as Reservas</div>
@@ -173,25 +170,27 @@
       </div>
       <div class="tab" id="tab-produtos">
         <div class="card"><div class="card-hd"><div class="card-title">Gerenciar Produtos</div></div>
-        <div style="overflow-x:auto" id="produtosWrap"><div class="loader"><div class="spin"></div></div></div></div>
+          <div style="overflow-x:auto" id="produtosWrap"><div class="loader"><div class="spin"></div></div></div>
+        </div>
       </div>
       <div class="tab" id="tab-novo">
-        <div class="card"><div class="card-hd"><div class="card-title">➕ Cadastrar Novo Produto</div></div>
-        <div style="padding:1.5rem;max-width:580px">
-          <div class="fg"><label class="fl">Nome *</label><input type="text" class="fi" id="npNome" placeholder="Ex: Spider-Man: No Way Home"/></div>
-          <div class="fg"><label class="fl">Descrição</label><textarea class="ft" id="npDesc" placeholder="Descreva o produto..."></textarea></div>
-          <div class="fgrid">
-            <div class="fg"><label class="fl">Categoria *</label><select class="fs" id="npCat"><option value="hq">HQ / Quadrinhos</option><option value="manga">Mangá</option><option value="funko">Funko Pop!</option><option value="card">Cards / TCG</option><option value="acessorio">Acessório</option></select></div>
-            <div class="fg"><label class="fl">Badge</label><select class="fs" id="npBadge"><option value="">Nenhum</option><option value="new">Novo</option><option value="hot">Hot</option><option value="limited">Limitado</option></select></div>
+        <div class="card"><div class="card-hd"><div class="card-title">Cadastrar Produto</div></div>
+          <div style="padding:1.5rem;max-width:580px">
+            <div class="fg"><label class="fl">Nome *</label><input type="text" class="fi" id="npNome" placeholder="Ex: Spider-Man"/></div>
+            <div class="fg"><label class="fl">Descricao</label><textarea class="ft" id="npDesc" placeholder="Descricao..."></textarea></div>
+            <div class="fgrid">
+              <div class="fg"><label class="fl">Categoria *</label><select class="fs" id="npCat"><option value="hq">HQ</option><option value="manga">Manga</option><option value="funko">Funko Pop</option><option value="card">Cards</option><option value="acessorio">Acessorio</option></select></div>
+              <div class="fg"><label class="fl">Badge</label><select class="fs" id="npBadge"><option value="">Nenhum</option><option value="new">Novo</option><option value="hot">Hot</option><option value="limited">Limitado</option></select></div>
+            </div>
+            <div class="fgrid">
+              <div class="fg"><label class="fl">Preco (R$) *</label><input type="number" class="fi" id="npPreco" placeholder="0.00" step="0.01" min="0"/></div>
+              <div class="fg"><label class="fl">Estoque *</label><input type="number" class="fi" id="npEstoque" placeholder="1" min="0" value="1"/></div>
+            </div>
+            <div class="fg"><label class="fl">Emoji</label><input type="text" class="fi" id="npEmoji" value="📦" style="width:80px;font-size:1.4rem"/></div>
+            <div id="npErr" class="err"></div><div id="npOk" class="ok"></div>
+            <button class="btn btn-purple" style="padding:14px 32px" onclick="criarProduto()">CADASTRAR</button>
           </div>
-          <div class="fgrid">
-            <div class="fg"><label class="fl">Preço (R$) *</label><input type="number" class="fi" id="npPreco" placeholder="0.00" step="0.01" min="0"/></div>
-            <div class="fg"><label class="fl">Estoque *</label><input type="number" class="fi" id="npEstoque" placeholder="1" min="0" value="1"/></div>
-          </div>
-          <div class="fg"><label class="fl">Emoji</label><input type="text" class="fi" id="npEmoji" value="📦" style="width:80px;font-size:1.4rem"/></div>
-          <div id="npErr" class="err"></div><div id="npOk" class="ok"></div>
-          <button class="btn btn-purple" style="padding:14px 32px" onclick="criarProduto()">CADASTRAR PRODUTO</button>
-        </div></div>
+        </div>
       </div>
     </div>
   </div>
@@ -202,7 +201,7 @@
     <div class="modal-hd"><div class="modal-title">EDITAR PRODUTO</div><button class="modal-close" onclick="fecharEdit()">X</button></div>
     <div class="modal-bd">
       <input type="hidden" id="epId"/>
-      <div class="fg"><label class="fl">Nome *</label><input type="text" class="fi" id="epNome"/></div>
+      <div class="fg"><label class="fl">Nome</label><input type="text" class="fi" id="epNome"/></div>
       <div class="fg"><label class="fl">Descricao</label><textarea class="ft" id="epDesc"></textarea></div>
       <div class="fgrid">
         <div class="fg"><label class="fl">Categoria</label><select class="fs" id="epCat"><option value="hq">HQ</option><option value="manga">Manga</option><option value="funko">Funko</option><option value="card">Cards</option><option value="acessorio">Acessorio</option></select></div>
@@ -234,173 +233,317 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore,collection,doc,addDoc,getDocs,getDoc,updateDoc,query,where,orderBy,serverTimestamp,runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  import { getAuth,signInWithPopup,signInWithEmailAndPassword,GoogleAuthProvider,onAuthStateChanged,signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, getDocs, getDoc, updateDoc, query, where, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
-    authDomain: "multiverso-banca.firebaseapp.com",
-    projectId: "multiverso-banca",
-    storageBucket: "multiverso-banca.firebasestorage.app",
-    messagingSenderId: "15821286059",
-    appId: "1:15821286059:web:385ffd2162ad55e005e5ee"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
+  authDomain: "multiverso-banca.firebaseapp.com",
+  projectId: "multiverso-banca",
+  storageBucket: "multiverso-banca.firebasestorage.app",
+  messagingSenderId: "15821286059",
+  appId: "1:15821286059:web:385ffd2162ad55e005e5ee"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+const app      = initializeApp(firebaseConfig);
+const db       = getFirestore(app);
+const auth     = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-  function fmtPreco(v){ return 'R$ '+Number(v).toFixed(2).replace('.',','); }
-  function statusHtml(s){const c={pending:'sp',confirmed:'sc',cancelled:'sx',completed:'sd'}[s]||'sp';const l={pending:'Aguardando',confirmed:'Confirmado',cancelled:'Cancelado',completed:'Retirado'}[s]||s;return '<span class="sb '+c+'">'+l+'</span>';}
-  function badgeHtml(b){if(!b)return'';const c={hot:'badge-hot',new:'badge-new',limited:'badge-limited'}[b]||'';const l={hot:'Hot',new:'Novo',limited:'Limitado'}[b]||b;return '<span class="'+c+'">'+l+'</span>';}
-  function stockCls(n){return n===0?'stock-zero':n<=2?'stock-low':'stock-ok';}
-
-  // ─────────────────────────────────────────────────────────────────
-  // SEGURANÇA: e-mails autorizados ficam na coleção "admins" do
-  // Firestore — nunca visíveis no código-fonte do site.
-  // Para adicionar alguém: crie um documento em admins/ com
-  // { email: "pessoa@email.com", ativo: true }
-  // ─────────────────────────────────────────────────────────────────
-  async function isAutorizado(email) {
-    if (!email) return false;
-    try {
-      const snap = await getDocs(query(
-        collection(db, 'admins'),
-        where('email', '==', email.toLowerCase()),
-        where('ativo', '==', true)
-      ));
-      return !snap.empty;
-    } catch(e) {
-      return false;
-    }
+// E-mails autorizados ficam na colecao "admins" do Firestore — nunca no codigo
+async function isAutorizado(email) {
+  if (!email) return false;
+  try {
+    const snap = await getDocs(query(
+      collection(db, 'admins'),
+      where('email', '==', email.toLowerCase()),
+      where('ativo', '==', true)
+    ));
+    return !snap.empty;
+  } catch(e) {
+    return false;
   }
+}
 
-  onAuthStateChanged(auth, async user => {
-    document.getElementById('loadingScreen').classList.add('hide');
-    if (user) {
-      const autorizado = await isAutorizado(user.email);
-      if (autorizado) {
-        document.getElementById('loginScreen').classList.remove('show');
-        document.getElementById('adminLayout').classList.add('show');
-        document.getElementById('userEmail').textContent = user.email;
-        document.getElementById('acessoNegado').classList.remove('show');
-        carregarDashboard();
-      } else {
-        document.getElementById('loginScreen').classList.add('show');
-        document.getElementById('adminLayout').classList.remove('show');
-        document.getElementById('acessoNegado').classList.add('show');
-        document.getElementById('emailNegado').textContent = user.email;
-      }
+onAuthStateChanged(auth, async function(user) {
+  document.getElementById('loadingScreen').classList.add('hide');
+  if (user) {
+    var autorizado = await isAutorizado(user.email);
+    if (autorizado) {
+      document.getElementById('loginScreen').classList.remove('show');
+      document.getElementById('adminLayout').classList.add('show');
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('acessoNegado').classList.remove('show');
+      carregarDashboard();
     } else {
       document.getElementById('loginScreen').classList.add('show');
       document.getElementById('adminLayout').classList.remove('show');
-      document.getElementById('acessoNegado').classList.remove('show');
+      document.getElementById('acessoNegado').classList.add('show');
+      document.getElementById('emailNegado').textContent = user.email;
     }
+  } else {
+    document.getElementById('loginScreen').classList.add('show');
+    document.getElementById('adminLayout').classList.remove('show');
+    document.getElementById('acessoNegado').classList.remove('show');
+  }
+});
+
+window.loginGoogle = async function() {
+  document.getElementById('loginErr').textContent = '';
+  try {
+    await signInWithPopup(auth, provider);
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      document.getElementById('loginErr').textContent = 'Erro ao entrar com Google.';
+    }
+  }
+};
+
+window.logout = async function() {
+  await signOut(auth);
+};
+
+var abaAtual = 'dashboard';
+var filtroStatusAtual = '';
+var statusReservaId = '';
+
+function fmtPreco(v) {
+  return 'R$ ' + Number(v).toFixed(2).replace('.', ',');
+}
+
+function statusHtml(s) {
+  var cls = {pending:'sp', confirmed:'sc', cancelled:'sx', completed:'sd'}[s] || 'sp';
+  var lbl = {pending:'Aguardando', confirmed:'Confirmado', cancelled:'Cancelado', completed:'Retirado'}[s] || s;
+  return '<span class="sb ' + cls + '">' + lbl + '</span>';
+}
+
+function badgeHtml(b) {
+  if (!b) return '';
+  var cls = {hot:'badge-hot', new:'badge-new', limited:'badge-limited'}[b] || '';
+  var lbl = {hot:'Hot', new:'Novo', limited:'Limitado'}[b] || b;
+  return '<span class="' + cls + '">' + lbl + '</span>';
+}
+
+function stockCls(n) {
+  return n === 0 ? 'stock-zero' : n <= 2 ? 'stock-low' : 'stock-ok';
+}
+
+window.irPara = function(aba, el) {
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  document.getElementById('tab-' + aba).classList.add('active');
+  var titles = {dashboard:'Dashboard', reservas:'Reservas', produtos:'Produtos', novo:'Novo Produto'};
+  var subs   = {dashboard:'Visao geral', reservas:'Gerenciar reservas', produtos:'Gerenciar catalogo', novo:'Adicionar produto'};
+  document.getElementById('tTitle').textContent = titles[aba] || aba;
+  document.getElementById('tSub').textContent   = subs[aba] || '';
+  abaAtual = aba;
+  if (aba === 'dashboard') carregarDashboard();
+  if (aba === 'reservas')  carregarReservas('');
+  if (aba === 'produtos')  carregarProdutos();
+};
+
+window.recarregar = function() { window.irPara(abaAtual, null); };
+
+async function carregarDashboard() {
+  try {
+    var resSnap  = await getDocs(collection(db, 'reservas'));
+    var prodSnap = await getDocs(query(collection(db, 'produtos'), where('ativo', '==', true)));
+    var reservas = resSnap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    var produtos  = prodSnap.docs.map(function(d) { return d.data(); });
+
+    var pending   = reservas.filter(function(r){return r.status==='pending';}).length;
+    var confirmed = reservas.filter(function(r){return r.status==='confirmed';}).length;
+    var cancelled = reservas.filter(function(r){return r.status==='cancelled';}).length;
+    var baixo     = produtos.filter(function(p){return p.estoque<=2;}).length;
+
+    document.getElementById('statsGrid').innerHTML =
+      '<div class="stat blue"><div class="stat-icon">📋</div><div class="stat-val">' + reservas.length + '</div><div class="stat-lbl">Total Reservas</div></div>' +
+      '<div class="stat yellow"><div class="stat-icon">⏳</div><div class="stat-val">' + pending + '</div><div class="stat-lbl">Aguardando</div></div>' +
+      '<div class="stat green"><div class="stat-icon">✅</div><div class="stat-val">' + confirmed + '</div><div class="stat-lbl">Confirmadas</div></div>' +
+      '<div class="stat red"><div class="stat-icon">❌</div><div class="stat-val">' + cancelled + '</div><div class="stat-lbl">Canceladas</div></div>' +
+      '<div class="stat purple"><div class="stat-icon">📦</div><div class="stat-val">' + produtos.length + '</div><div class="stat-lbl">Produtos</div></div>' +
+      '<div class="stat yellow"><div class="stat-icon">⚠️</div><div class="stat-val">' + baixo + '</div><div class="stat-lbl">Estoque Baixo</div></div>';
+
+    var recentes = reservas.sort(function(a,b){ return (b.criadoEm && b.criadoEm.seconds||0) - (a.criadoEm && a.criadoEm.seconds||0); }).slice(0, 6);
+    var rows = recentes.map(function(r) {
+      var data = r.criadoEm && r.criadoEm.toDate ? r.criadoEm.toDate().toLocaleDateString('pt-BR') : '--';
+      return '<tr><td><span style="font-family:\'Orbitron\',monospace;color:var(--gold);font-size:.75rem">' + r.codigo + '</span></td>' +
+             '<td>' + r.produtoEmoji + ' ' + r.produtoNome + '</td>' +
+             '<td>' + r.nome + '</td>' +
+             '<td>' + statusHtml(r.status) + '</td>' +
+             '<td style="font-size:.75rem;color:var(--muted)">' + data + '</td></tr>';
+    }).join('');
+
+    document.getElementById('tRecentes').innerHTML =
+      '<thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>Status</th><th>Data</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">Nenhuma reserva ainda.</td></tr>') + '</tbody>';
+  } catch(e) { console.error(e); }
+}
+
+async function carregarReservas(filtro) {
+  filtroStatusAtual = filtro;
+  var wrap = document.getElementById('reservasWrap');
+  wrap.innerHTML = '<div class="loader"><div class="spin"></div></div>';
+  try {
+    var snap = await getDocs(query(collection(db, 'reservas'), orderBy('criadoEm', 'desc')));
+    var lista = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    if (filtro) lista = lista.filter(function(r) { return r.status === filtro; });
+    if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhuma reserva encontrada.</div>'; return; }
+    var rows = lista.map(function(r) {
+      var data = r.dataRetirada ? new Date(r.dataRetirada + 'T12:00').toLocaleDateString('pt-BR') : '--';
+      return '<tr>' +
+        '<td><span style="font-family:\'Orbitron\',monospace;color:var(--gold);font-size:.75rem">' + r.codigo + '</span></td>' +
+        '<td>' + r.produtoEmoji + ' ' + r.produtoNome + '</td>' +
+        '<td>' + r.nome + '</td>' +
+        '<td style="font-size:.8rem;color:var(--muted)">' + r.tel + '</td>' +
+        '<td style="font-size:.8rem">' + data + '</td>' +
+        '<td>' + r.quantidade + 'x</td>' +
+        '<td>' + statusHtml(r.status) + '</td>' +
+        '<td><button class="btn btn-ghost btn-sm" onclick="abrirStatus(\'' + r.id + '\',\'' + r.status + '\',\'' + r.codigo + '\')">Editar</button></td>' +
+        '</tr>';
+    }).join('');
+    wrap.innerHTML = '<table><thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>WhatsApp</th><th>Retirada</th><th>Qtd</th><th>Status</th><th>Acao</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  } catch(e) { wrap.innerHTML = '<div class="empty">Erro ao carregar.</div>'; }
+}
+
+window.filtrarRes = function(s, el) {
+  document.querySelectorAll('.fbtn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+  carregarReservas(s);
+};
+
+window.abrirStatus = function(id, status, codigo) {
+  statusReservaId = id;
+  document.getElementById('sCodigo').textContent = codigo;
+  document.getElementById('sSelect').value = status;
+  document.getElementById('sErr').textContent = '';
+  document.getElementById('statusOverlay').classList.add('open');
+};
+window.fecharStatus = function() { document.getElementById('statusOverlay').classList.remove('open'); };
+
+window.confirmarStatus = async function() {
+  var novoStatus = document.getElementById('sSelect').value;
+  try {
+    var resRef  = doc(db, 'reservas', statusReservaId);
+    var resSnap = await getDoc(resRef);
+    var resData = resSnap.data();
+    if (novoStatus === 'cancelled' && resData.status !== 'cancelled') {
+      await runTransaction(db, async function(tx) {
+        var prodRef  = doc(db, 'produtos', resData.produtoId);
+        var prodSnap = await tx.get(prodRef);
+        tx.update(resRef,  { status: novoStatus });
+        tx.update(prodRef, { estoque: (prodSnap.data().estoque || 0) + resData.quantidade });
+      });
+    } else {
+      await updateDoc(resRef, { status: novoStatus });
+    }
+    fecharStatus();
+    carregarReservas(filtroStatusAtual);
+  } catch(e) { document.getElementById('sErr').textContent = 'Erro ao atualizar.'; }
+};
+
+async function carregarProdutos() {
+  var wrap = document.getElementById('produtosWrap');
+  wrap.innerHTML = '<div class="loader"><div class="spin"></div></div>';
+  try {
+    var snap = await getDocs(query(collection(db, 'produtos'), where('ativo', '==', true)));
+    var lista = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhum produto.</div>'; return; }
+    var rows = lista.map(function(p) {
+      var editData = JSON.stringify({id:p.id, nome:p.nome, descricao:p.descricao||'', categoria:p.categoria, badge:p.badge||'', preco:p.preco, estoque:p.estoque, emoji:p.emoji||'📦'}).replace(/"/g, '&quot;');
+      return '<tr>' +
+        '<td>' + p.emoji + ' <strong>' + p.nome + '</strong></td>' +
+        '<td style="font-size:.8rem;color:var(--muted)">' + p.categoria + '</td>' +
+        '<td style="font-family:\'Orbitron\',monospace;color:var(--gold)">' + fmtPreco(p.preco) + '</td>' +
+        '<td class="' + stockCls(p.estoque) + '" style="font-family:\'Orbitron\',monospace;font-weight:700">' + p.estoque + '</td>' +
+        '<td>' + badgeHtml(p.badge) + '</td>' +
+        '<td style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+        '<button class="btn btn-ghost btn-sm" onclick="abrirEdit(\'' + editData + '\')">Editar</button>' +
+        '<button class="btn btn-danger btn-sm" onclick="desativar(\'' + p.id + '\',\'' + p.nome + '\')">Remover</button>' +
+        '</td></tr>';
+    }).join('');
+    wrap.innerHTML = '<table><thead><tr><th>Produto</th><th>Categoria</th><th>Preco</th><th>Estoque</th><th>Badge</th><th>Acoes</th></tr></thead><tbody>' + rows + '</tbody></table>';
+  } catch(e) { wrap.innerHTML = '<div class="empty">Erro ao carregar.</div>'; }
+}
+
+window.abrirEdit = function(p) {
+  var prod = typeof p === 'string' ? JSON.parse(p) : p;
+  document.getElementById('epId').value      = prod.id;
+  document.getElementById('epNome').value    = prod.nome;
+  document.getElementById('epDesc').value    = prod.descricao || '';
+  document.getElementById('epCat').value     = prod.categoria;
+  document.getElementById('epBadge').value   = prod.badge || '';
+  document.getElementById('epPreco').value   = prod.preco;
+  document.getElementById('epEstoque').value = prod.estoque;
+  document.getElementById('epEmoji').value   = prod.emoji || '📦';
+  document.getElementById('epErr').textContent = '';
+  document.getElementById('editOverlay').classList.add('open');
+};
+window.fecharEdit = function() { document.getElementById('editOverlay').classList.remove('open'); };
+
+window.salvarEdit = async function() {
+  var id = document.getElementById('epId').value;
+  var dados = {
+    nome:      document.getElementById('epNome').value,
+    descricao: document.getElementById('epDesc').value,
+    categoria: document.getElementById('epCat').value,
+    badge:     document.getElementById('epBadge').value || null,
+    preco:     parseFloat(document.getElementById('epPreco').value),
+    estoque:   parseInt(document.getElementById('epEstoque').value),
+    emoji:     document.getElementById('epEmoji').value || '📦'
+  };
+  try {
+    await updateDoc(doc(db, 'produtos', id), dados);
+    fecharEdit();
+    carregarProdutos();
+  } catch(e) { document.getElementById('epErr').textContent = 'Erro ao salvar.'; }
+};
+
+window.desativar = async function(id, nome) {
+  if (!confirm('Desativar "' + nome + '"?')) return;
+  await updateDoc(doc(db, 'produtos', id), { ativo: false });
+  carregarProdutos();
+};
+
+window.criarProduto = async function() {
+  var nome    = document.getElementById('npNome').value.trim();
+  var preco   = parseFloat(document.getElementById('npPreco').value);
+  var estoque = parseInt(document.getElementById('npEstoque').value);
+  document.getElementById('npErr').textContent = '';
+  document.getElementById('npOk').textContent  = '';
+  if (!nome || isNaN(preco) || isNaN(estoque)) {
+    document.getElementById('npErr').textContent = 'Preencha nome, preco e estoque.';
+    return;
+  }
+  try {
+    await addDoc(collection(db, 'produtos'), {
+      nome:      nome,
+      descricao: document.getElementById('npDesc').value,
+      categoria: document.getElementById('npCat').value,
+      badge:     document.getElementById('npBadge').value || null,
+      preco:     preco,
+      estoque:   estoque,
+      emoji:     document.getElementById('npEmoji').value || '📦',
+      ativo:     true,
+      criadoEm:  serverTimestamp()
+    });
+    document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado!';
+    document.getElementById('npNome').value    = '';
+    document.getElementById('npDesc').value    = '';
+    document.getElementById('npPreco').value   = '';
+    document.getElementById('npEstoque').value = '1';
+    document.getElementById('npEmoji').value   = '📦';
+    document.getElementById('npBadge').value   = '';
+  } catch(e) { document.getElementById('npErr').textContent = 'Erro ao cadastrar.'; }
+};
+
+['editOverlay', 'statusOverlay'].forEach(function(id) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    if (e.target.id === id) document.getElementById(id).classList.remove('open');
   });
-
-  window.loginGoogle = async function(){
-    document.getElementById('loginErr').textContent='';
-    try{ await signInWithPopup(auth,provider); }
-    catch(e){ if(e.code!=='auth/popup-closed-by-user') document.getElementById('loginErr').textContent='Erro ao entrar com Google.'; }
-  };
-
-  window.logout = async function(){ await signOut(auth); };
-
-    document.getElementById('tSub').textContent=tabSubs[aba]||'';
-    abaAtual=aba;
-    if(aba==='dashboard')carregarDashboard();
-    if(aba==='reservas')carregarReservas();
-    if(aba==='produtos')carregarProdutos();
-  };
-  window.recarregar=()=>window.irPara(abaAtual,null);
-
-  async function carregarDashboard(){
-    try{
-      const[resSnap,prodSnap]=await Promise.all([getDocs(collection(db,'reservas')),getDocs(query(collection(db,'produtos'),where('ativo','==',true)))]);
-      const reservas=resSnap.docs.map(d=>({id:d.id,...d.data()}));
-      const produtos=prodSnap.docs.map(d=>d.data());
-      document.getElementById('statsGrid').innerHTML=`
-        <div class="stat blue"><div class="stat-icon">📋</div><div class="stat-val">${reservas.length}</div><div class="stat-lbl">Total Reservas</div></div>
-        <div class="stat yellow"><div class="stat-icon">⏳</div><div class="stat-val">${reservas.filter(r=>r.status==='pending').length}</div><div class="stat-lbl">Aguardando</div></div>
-        <div class="stat green"><div class="stat-icon">✅</div><div class="stat-val">${reservas.filter(r=>r.status==='confirmed').length}</div><div class="stat-lbl">Confirmadas</div></div>
-        <div class="stat red"><div class="stat-icon">❌</div><div class="stat-val">${reservas.filter(r=>r.status==='cancelled').length}</div><div class="stat-lbl">Canceladas</div></div>
-        <div class="stat purple"><div class="stat-icon">📦</div><div class="stat-val">${produtos.length}</div><div class="stat-lbl">Produtos</div></div>
-        <div class="stat yellow"><div class="stat-icon">⚠️</div><div class="stat-val">${produtos.filter(p=>p.estoque<=2).length}</div><div class="stat-lbl">Estoque Baixo</div></div>`;
-      const recentes=reservas.sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0)).slice(0,6);
-      document.getElementById('tRecentes').innerHTML=`<thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>Status</th><th>Data</th></tr></thead><tbody>${recentes.map(r=>`<tr><td><span style="font-family:'Orbitron',monospace;color:var(--gold);font-size:.75rem">${r.codigo}</span></td><td>${r.produtoEmoji} ${r.produtoNome}</td><td>${r.nome}</td><td>${statusHtml(r.status)}</td><td style="font-size:.75rem;color:var(--muted)">${r.criadoEm?.toDate?.()?.toLocaleDateString('pt-BR')||'--'}</td></tr>`).join('')||'<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">Nenhuma reserva ainda.</td></tr>'}</tbody>`;
-    }catch(e){console.error(e);}
-  }
-
-  async function carregarReservas(filtro=''){
-    filtroStatusAtual=filtro;
-    const wrap=document.getElementById('reservasWrap');
-    wrap.innerHTML='<div class="loader"><div class="spin"></div></div>';
-    try{
-      const snap=await getDocs(query(collection(db,'reservas'),orderBy('criadoEm','desc')));
-      let lista=snap.docs.map(d=>({id:d.id,...d.data()}));
-      if(filtro)lista=lista.filter(r=>r.status===filtro);
-      if(!lista.length){wrap.innerHTML='<div class="empty">Nenhuma reserva encontrada.</div>';return;}
-      wrap.innerHTML=`<table><thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>WhatsApp</th><th>Retirada</th><th>Qtd</th><th>Status</th><th>Acao</th></tr></thead><tbody>${lista.map(r=>`<tr><td><span style="font-family:'Orbitron',monospace;color:var(--gold);font-size:.75rem">${r.codigo}</span></td><td>${r.produtoEmoji} ${r.produtoNome}</td><td>${r.nome}</td><td style="font-size:.8rem;color:var(--muted)">${r.tel}</td><td style="font-size:.8rem">${r.dataRetirada?new Date(r.dataRetirada+'T12:00').toLocaleDateString('pt-BR'):'--'}</td><td>${r.quantidade}x</td><td>${statusHtml(r.status)}</td><td><button class="btn btn-ghost btn-sm" onclick="abrirStatus('${r.id}','${r.status}','${r.codigo}')">Editar</button></td></tr>`).join('')}</tbody></table>`;
-    }catch(e){wrap.innerHTML='<div class="empty">Erro ao carregar.</div>';}
-  }
-
-  window.filtrarRes=function(s,el){document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));el.classList.add('active');carregarReservas(s);};
-  window.abrirStatus=function(id,status,codigo){statusReservaId=id;document.getElementById('sCodigo').textContent=codigo;document.getElementById('sSelect').value=status;document.getElementById('sErr').textContent='';document.getElementById('statusOverlay').classList.add('open');};
-  window.fecharStatus=()=>document.getElementById('statusOverlay').classList.remove('open');
-
-  window.confirmarStatus=async function(){
-    const novoStatus=document.getElementById('sSelect').value;
-    try{
-      const resRef=doc(db,'reservas',statusReservaId);
-      const resSnap=await getDoc(resRef);
-      const resData=resSnap.data();
-      if(novoStatus==='cancelled'&&resData.status!=='cancelled'){
-        await runTransaction(db,async tx=>{const prodRef=doc(db,'produtos',resData.produtoId);const prodSnap=await tx.get(prodRef);tx.update(resRef,{status:novoStatus});tx.update(prodRef,{estoque:(prodSnap.data().estoque||0)+resData.quantidade});});
-      }else{await updateDoc(resRef,{status:novoStatus});}
-      fecharStatus();carregarReservas(filtroStatusAtual);
-    }catch(e){document.getElementById('sErr').textContent='Erro ao atualizar.';}
-  };
-
-  async function carregarProdutos(){
-    const wrap=document.getElementById('produtosWrap');
-    wrap.innerHTML='<div class="loader"><div class="spin"></div></div>';
-    try{
-      const snap=await getDocs(query(collection(db,'produtos'),where('ativo','==',true)));
-      const lista=snap.docs.map(d=>({id:d.id,...d.data()}));
-      if(!lista.length){wrap.innerHTML='<div class="empty">Nenhum produto.</div>';return;}
-      wrap.innerHTML=`<table><thead><tr><th>Produto</th><th>Categoria</th><th>Preco</th><th>Estoque</th><th>Badge</th><th>Acoes</th></tr></thead><tbody>${lista.map(p=>`<tr><td>${p.emoji} <strong>${p.nome}</strong></td><td style="font-size:.8rem;color:var(--muted)">${p.categoria}</td><td style="font-family:'Orbitron',monospace;color:var(--gold)">${fmtPreco(p.preco)}</td><td class="${stockCls(p.estoque)}" style="font-family:'Orbitron',monospace;font-weight:700">${p.estoque}</td><td>${badgeHtml(p.badge)}</td><td style="display:flex;gap:.5rem;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick='abrirEdit(${JSON.stringify({id:p.id,nome:p.nome,descricao:p.descricao,categoria:p.categoria,badge:p.badge||"",preco:p.preco,estoque:p.estoque,emoji:p.emoji}).replace(/'/g,"&#39;")})'>Editar</button><button class="btn btn-danger btn-sm" onclick="desativar('${p.id}','${p.nome}')">Remover</button></td></tr>`).join('')}</tbody></table>`;
-    }catch(e){wrap.innerHTML='<div class="empty">Erro ao carregar.</div>';}
-  }
-
-  window.abrirEdit=function(p){const prod=typeof p==='string'?JSON.parse(p):p;document.getElementById('epId').value=prod.id;document.getElementById('epNome').value=prod.nome;document.getElementById('epDesc').value=prod.descricao||'';document.getElementById('epCat').value=prod.categoria;document.getElementById('epBadge').value=prod.badge||'';document.getElementById('epPreco').value=prod.preco;document.getElementById('epEstoque').value=prod.estoque;document.getElementById('epEmoji').value=prod.emoji||'📦';document.getElementById('epErr').textContent='';document.getElementById('editOverlay').classList.add('open');};
-  window.fecharEdit=()=>document.getElementById('editOverlay').classList.remove('open');
-
-  window.salvarEdit=async function(){
-    const id=document.getElementById('epId').value;
-    const dados={nome:document.getElementById('epNome').value,descricao:document.getElementById('epDesc').value,categoria:document.getElementById('epCat').value,badge:document.getElementById('epBadge').value||null,preco:parseFloat(document.getElementById('epPreco').value),estoque:parseInt(document.getElementById('epEstoque').value),emoji:document.getElementById('epEmoji').value||'📦'};
-    try{await updateDoc(doc(db,'produtos',id),dados);fecharEdit();carregarProdutos();}
-    catch(e){document.getElementById('epErr').textContent='Erro ao salvar.';}
-  };
-
-  window.desativar=async function(id,nome){if(!confirm(`Desativar "${nome}"?`))return;await updateDoc(doc(db,'produtos',id),{ativo:false});carregarProdutos();};
-
-  window.criarProduto=async function(){
-    const nome=document.getElementById('npNome').value.trim();
-    const preco=parseFloat(document.getElementById('npPreco').value);
-    const estoque=parseInt(document.getElementById('npEstoque').value);
-    document.getElementById('npErr').textContent='';document.getElementById('npOk').textContent='';
-    if(!nome||isNaN(preco)||isNaN(estoque)){document.getElementById('npErr').textContent='Preencha nome, preco e estoque.';return;}
-    try{
-      await addDoc(collection(db,'produtos'),{nome,descricao:document.getElementById('npDesc').value,categoria:document.getElementById('npCat').value,badge:document.getElementById('npBadge').value||null,preco,estoque,emoji:document.getElementById('npEmoji').value||'📦',ativo:true,criadoEm:serverTimestamp()});
-      document.getElementById('npOk').textContent=`Produto "${nome}" cadastrado!`;
-      ['npNome','npDesc','npPreco'].forEach(id=>document.getElementById(id).value='');
-      document.getElementById('npEstoque').value='1';document.getElementById('npEmoji').value='📦';document.getElementById('npBadge').value='';
-    }catch(e){document.getElementById('npErr').textContent='Erro ao cadastrar.';}
-  };
-
-  ['editOverlay','statusOverlay'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});});
+});
 </script>
 </body>
 </html>
