@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multiverso — Loja Geek na Taquara, RJ</title>
+  <meta name="description" content="Loja geek em Taquara, RJ. HQs, Mangás, Funkos, Cards e muito mais. Reserve online!"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --bg:#080c14;--bg2:#0d1424;--card:#111827;--border:#1e3a5f;
+      --neon:#00d4ff;--neon2:#ff3e6c;--neon3:#a855f7;--gold:#fbbf24;
+      --text:#e2e8f0;--muted:#64748b;--success:#22c55e;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;overflow-x:hidden;}
+    body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,212,255,.015) 2px,rgba(0,212,255,.015) 4px);pointer-events:none;z-index:9999;}
+
+    /* STARS */
+    .stars{position:fixed;inset:0;pointer-events:none;z-index:0;}
+    .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite;}
+    @keyframes twinkle{0%,100%{opacity:.1;}50%{opacity:.8;}}
+
+    /* NAV */
+    nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(8,12,20,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;}
+    .logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.3rem;color:var(--neon);text-shadow:0 0 20px var(--neon);letter-spacing:2px;text-decoration:none;}
+    .logo span{color:var(--neon2);}
+    nav ul{list-style:none;display:flex;gap:2rem;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;transition:color .2s;}
+    nav a:hover{color:var(--neon);}
+
+    /* HERO */
+    .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 2rem 2rem;overflow:hidden;}
+    .hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.04) 1px,transparent 1px);background-size:60px 60px;animation:gridMove 20s linear infinite;}
+    @keyframes gridMove{0%{transform:perspective(500px) rotateX(30deg) translateY(0);}100%{transform:perspective(500px) rotateX(30deg) translateY(60px);}}
+    .hero-content{position:relative;z-index:2;}
+    .hero-badge{display:inline-block;background:rgba(0,212,255,.1);border:1px solid var(--neon);color:var(--neon);font-size:.7rem;letter-spacing:3px;text-transform:uppercase;padding:6px 20px;margin-bottom:1.5rem;animation:fadeUp .6s ease both;}
+    .hero h1{font-family:'Orbitron',monospace;font-size:clamp(2.5rem,8vw,6rem);font-weight:900;line-height:.95;letter-spacing:-2px;margin-bottom:1rem;animation:fadeUp .7s .1s ease both;}
+    .hero h1 .l1{color:#fff;}
+    .hero h1 .l2{color:transparent;-webkit-text-stroke:2px var(--neon);text-shadow:0 0 40px rgba(0,212,255,.3);}
+    .hero p{font-size:1.1rem;color:var(--muted);max-width:500px;margin:0 auto 2.5rem;line-height:1.6;animation:fadeUp .7s .2s ease both;}
+    .hero-cta{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .7s .3s ease both;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+    .scroll-hint{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.5rem;color:var(--muted);font-size:.7rem;letter-spacing:2px;text-transform:uppercase;animation:bounce 2s infinite;}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+
+    /* BUTTONS */
+    .btn-primary{background:var(--neon);color:#000;font-family:'Orbitron',monospace;font-weight:700;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;padding:14px 32px;border:none;cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .2s;text-decoration:none;display:inline-block;}
+    .btn-primary:hover{background:#fff;box-shadow:0 0 30px var(--neon);transform:translateY(-2px);}
+    .btn-secondary{background:transparent;color:var(--neon);font-family:'Orbitron',monospace;font-weight:700;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;padding:14px 32px;border:1px solid var(--neon);cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);transition:all .2s;text-decoration:none;display:inline-block;}
+    .btn-secondary:hover{background:rgba(0,212,255,.1);}
+
+    /* SECTIONS */
+    .section{position:relative;z-index:1;padding:6rem 2rem;max-width:1200px;margin:0 auto;}
+    .section-label{font-family:'Orbitron',monospace;font-size:.7rem;letter-spacing:4px;text-transform:uppercase;color:var(--neon);margin-bottom:.5rem;}
+    .section-title{font-family:'Orbitron',monospace;font-size:clamp(1.5rem,4vw,2.5rem);font-weight:900;color:#fff;margin-bottom:3rem;}
+    .section-title span{color:var(--neon2);}
+
+    /* CATEGORIES */
+    .categories{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;}
+    .cat-card{background:var(--card);border:1px solid var(--border);padding:1.75rem 1rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+    .cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--neon);transform:scaleX(0);transition:transform .3s;}
+    .cat-card:hover::before,.cat-card.active::before{transform:scaleX(1);}
+    .cat-card:hover,.cat-card.active{border-color:var(--neon);box-shadow:0 0 20px rgba(0,212,255,.15);transform:translateY(-4px);}
+    .cat-card.active{background:rgba(0,212,255,.06);}
+    .cat-icon{font-size:2.5rem;margin-bottom:.75rem;display:block;}
+    .cat-name{font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;color:#fff;letter-spacing:1px;}
+    .cat-sub{font-size:.72rem;color:var(--muted);margin-top:.25rem;}
+
+    /* PRODUCTS */
+    .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;}
+    .product-card{background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden;transition:all .3s;}
+    .product-card:hover{border-color:var(--neon3);box-shadow:0 0 30px rgba(168,85,247,.2);transform:translateY(-4px);}
+    .product-img{width:100%;height:200px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:5rem;border-bottom:1px solid var(--border);}
+    .product-badge{position:absolute;top:12px;left:12px;font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;font-family:'Orbitron',monospace;}
+    .badge-new{background:var(--neon2);color:#fff;}
+    .badge-hot{background:var(--gold);color:#000;}
+    .badge-limited{background:var(--neon3);color:#fff;}
+    .stock-warning{position:absolute;top:12px;right:12px;font-size:.6rem;background:rgba(255,62,108,.15);border:1px solid var(--neon2);color:var(--neon2);padding:3px 8px;font-family:'Orbitron',monospace;}
+    .product-info{padding:1.25rem;}
+    .product-cat{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--neon);margin-bottom:.4rem;}
+    .product-name{font-family:'Orbitron',monospace;font-size:.88rem;font-weight:700;color:#fff;margin-bottom:.5rem;line-height:1.3;}
+    .product-desc{font-size:.8rem;color:var(--muted);margin-bottom:1rem;line-height:1.5;}
+    .product-footer{display:flex;align-items:flex-end;justify-content:space-between;gap:.5rem;}
+    .product-price{font-family:'Orbitron',monospace;font-weight:700;color:var(--gold);font-size:1.05rem;}
+    .product-stock{font-size:.7rem;color:var(--muted);margin-top:2px;}
+    .btn-reserve{background:transparent;border:1px solid var(--neon3);color:var(--neon3);font-family:'Orbitron',monospace;font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:9px 16px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .btn-reserve:hover:not(:disabled){background:var(--neon3);color:#fff;box-shadow:0 0 15px rgba(168,85,247,.5);}
+    .btn-reserve:disabled{opacity:.35;cursor:not-allowed;border-color:var(--muted);color:var(--muted);}
+
+    /* LOADER */
+    .loader{text-align:center;padding:3rem;color:var(--muted);}
+    .spin{display:inline-block;width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--neon);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:1rem;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .empty-state{text-align:center;padding:3rem;color:var(--muted);}
+    .empty-state .ei{font-size:3rem;margin-bottom:1rem;}
+
+    /* MODAL */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px);}
+    .overlay.open{display:flex;}
+    .modal{background:var(--bg2);border:1px solid var(--neon3);box-shadow:0 0 60px rgba(168,85,247,.3);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:mIn .3s ease;position:relative;}
+    @keyframes mIn{from{opacity:0;transform:scale(.9) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+    .modal-hd{padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+    .modal-title{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;color:#fff;}
+    .modal-sub{font-size:.8rem;color:var(--neon3);margin-top:2px;}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;transition:color .2s;}
+    .modal-close:hover{color:var(--neon2);}
+    .modal-bd{padding:1.5rem;}
+    .modal-product{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;padding:1rem;background:var(--card);border:1px solid var(--border);}
+    .modal-product-emoji{font-size:2.5rem;}
+    .modal-product-name{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;color:#fff;}
+    .modal-product-price{font-family:'Orbitron',monospace;color:var(--gold);font-size:1rem;font-weight:700;margin-top:2px;}
+
+    /* FORM */
+    .fg{margin-bottom:1.25rem;}
+    .fl{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--neon);margin-bottom:.5rem;font-family:'Orbitron',monospace;}
+    .fi,.fs,.ft{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text);font-family:'Exo 2',sans-serif;font-size:.9rem;padding:12px 14px;outline:none;transition:border-color .2s;}
+    .fi:focus,.fs:focus,.ft:focus{border-color:var(--neon3);box-shadow:0 0 10px rgba(168,85,247,.2);}
+    .fs option{background:var(--card);}
+    .ft{resize:vertical;min-height:80px;}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+    .btn-submit{width:100%;background:var(--neon3);color:#fff;font-family:'Orbitron',monospace;font-weight:700;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;padding:16px;border:none;cursor:pointer;transition:all .2s;clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);margin-top:.5rem;}
+    .btn-submit:hover:not(:disabled){background:#c084fc;box-shadow:0 0 30px rgba(168,85,247,.6);}
+    .btn-submit:disabled{opacity:.5;cursor:not-allowed;}
+    .err{color:var(--neon2);font-size:.8rem;margin-top:.5rem;}
+
+    /* SUCCESS */
+    .success-screen{display:none;text-align:center;padding:2rem;}
+    .success-screen.show{display:block;}
+    .success-icon{font-size:4rem;margin-bottom:1rem;animation:pop .5s ease;}
+    @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.2);}100%{transform:scale(1);}}
+    .success-title{font-family:'Orbitron',monospace;font-size:1.2rem;font-weight:900;color:var(--success);margin-bottom:.5rem;}
+    .success-txt{color:var(--muted);font-size:.9rem;line-height:1.7;}
+    .success-code{font-family:'Orbitron',monospace;font-size:1.4rem;font-weight:900;color:var(--gold);letter-spacing:4px;background:var(--card);border:1px dashed var(--gold);padding:12px 24px;display:inline-block;margin:1.25rem 0;}
+    .whatsapp-btn{display:inline-flex;align-items:center;gap:.5rem;background:#25d366;color:#fff;font-family:'Orbitron',monospace;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 24px;text-decoration:none;margin-top:.75rem;transition:all .2s;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);}
+    .whatsapp-btn:hover{background:#128c7e;box-shadow:0 0 20px rgba(37,211,102,.4);}
+
+    /* RESERVAS */
+    .search-bar{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;}
+    .search-bar .fi{flex:1;min-width:200px;}
+    .reservas-table{width:100%;border-collapse:collapse;}
+    .reservas-table th{font-family:'Orbitron',monospace;font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--neon);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--card);}
+    .reservas-table td{padding:12px 14px;border-bottom:1px solid rgba(30,58,95,.5);font-size:.85rem;vertical-align:middle;}
+    .reservas-table tr:hover td{background:rgba(0,212,255,.02);}
+    .sb{font-family:'Orbitron',monospace;font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;}
+    .sp{background:rgba(251,191,36,.15);color:var(--gold);border:1px solid rgba(251,191,36,.3);}
+    .sc{background:rgba(34,197,94,.15);color:var(--success);border:1px solid rgba(34,197,94,.3);}
+    .sx{background:rgba(255,62,108,.15);color:var(--neon2);border:1px solid rgba(255,62,108,.3);}
+    .sd{background:rgba(168,85,247,.15);color:var(--neon3);border:1px solid rgba(168,85,247,.3);}
+    .btn-cancel{background:none;border:1px solid var(--neon2);color:var(--neon2);font-size:.62rem;padding:5px 10px;cursor:pointer;font-family:'Orbitron',monospace;letter-spacing:1px;transition:all .2s;}
+    .btn-cancel:hover{background:var(--neon2);color:#fff;}
+
+    /* INFO */
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;}
+    .info-card{background:var(--card);border:1px solid var(--border);padding:1.75rem;position:relative;overflow:hidden;}
+    .info-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--neon),var(--neon3));}
+    .info-icon{font-size:2rem;margin-bottom:1rem;}
+    .info-title{font-family:'Orbitron',monospace;font-size:.8rem;font-weight:700;color:#fff;margin-bottom:.5rem;}
+    .info-txt{font-size:.85rem;color:var(--muted);line-height:1.6;}
+    .hl{color:var(--neon);font-weight:600;}
+
+    /* FOOTER */
+    footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:3rem 2rem;text-align:center;}
+    .footer-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:1.5rem;color:var(--neon);text-shadow:0 0 20px var(--neon);letter-spacing:2px;margin-bottom:.5rem;}
+    .footer-logo span{color:var(--neon2);}
+    .footer-sub{color:var(--muted);font-size:.85rem;margin-bottom:1.5rem;}
+    .footer-links{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+    .footer-links a{color:var(--muted);text-decoration:none;font-size:.8rem;transition:color .2s;}
+    .footer-links a:hover{color:var(--neon);}
+    .footer-copy{color:#334155;font-size:.75rem;}
+
+    @media(max-width:640px){nav ul{display:none;}.frow{grid-template-columns:1fr;}.hero h1{letter-spacing:-1px;}}
+  </style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<nav>
+  <a class="logo" href="#">MULTI<span>VERSO</span></a>
+  <ul>
+    <li><a href="#produtos">Produtos</a></li>
+    <li><a href="#reservas">Minhas Reservas</a></li>
+    <li><a href="#info">A Loja</a></li>
+    <li><a href="admin/index.html" style="color:var(--neon3)">Admin</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🌌 Loja Geek · Taquara, RJ</div>
+    <h1><div class="l1">ENTRE NO</div><div class="l2">MULTIVERSO</div></h1>
+    <p>HQs, Mangás, Funkos, Cards e tudo mais que alimenta o seu universo geek. Reserve antes de vir buscar!</p>
+    <div class="hero-cta">
+      <a href="#produtos" class="btn-primary">Ver Produtos</a>
+      <a href="#reservas" class="btn-secondary">Minhas Reservas</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>Explorar</span><span>↓</span></div>
+</section>
+
+<!-- CATEGORIAS -->
+<div class="section">
+  <div class="section-label">// Categorias</div>
+  <div class="section-title">O que você <span>procura?</span></div>
+  <div class="categories" id="cats">
+    <div class="cat-card active" data-cat="todos" onclick="filtrar('todos',this)"><span class="cat-icon">🌌</span><div class="cat-name">Tudo</div><div class="cat-sub">Ver todos</div></div>
+    <div class="cat-card" data-cat="hq" onclick="filtrar('hq',this)"><span class="cat-icon">📚</span><div class="cat-name">HQs</div><div class="cat-sub">Marvel, DC e indie</div></div>
+    <div class="cat-card" data-cat="manga" onclick="filtrar('manga',this)"><span class="cat-icon">📖</span><div class="cat-name">Mangás</div><div class="cat-sub">Shonen, Shojo e +</div></div>
+    <div class="cat-card" data-cat="funko" onclick="filtrar('funko',this)"><span class="cat-icon">🎭</span><div class="cat-name">Funkos</div><div class="cat-sub">Pop! Vinyl</div></div>
+    <div class="cat-card" data-cat="card" onclick="filtrar('card',this)"><span class="cat-icon">🃏</span><div class="cat-name">Cards</div><div class="cat-sub">TCG & colecionáveis</div></div>
+    <div class="cat-card" data-cat="acessorio" onclick="filtrar('acessorio',this)"><span class="cat-icon">🎮</span><div class="cat-name">Acessórios</div><div class="cat-sub">Posters, pins e +</div></div>
+  </div>
+</div>
+
+<!-- PRODUTOS -->
+<div class="section" id="produtos">
+  <div class="section-label">// Catálogo</div>
+  <div class="section-title">Produtos em <span>Destaque</span></div>
+  <div id="productsGrid" class="products-grid">
+    <div class="loader"><div class="spin"></div><div>Carregando produtos...</div></div>
+  </div>
+</div>
+
+<!-- RESERVAS -->
+<div class="section" id="reservas">
+  <div class="section-label">// Painel do Cliente</div>
+  <div class="section-title">Minhas <span>Reservas</span></div>
+  <div class="search-bar">
+    <input type="tel" class="fi" id="searchWpp" placeholder="Digite seu WhatsApp para buscar reservas..."/>
+    <button class="btn-primary" onclick="buscarReservas()">BUSCAR</button>
+  </div>
+  <div id="reservasContainer">
+    <div class="empty-state"><div class="ei">🔍</div><p>Digite seu WhatsApp acima para ver suas reservas.</p></div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="section" id="info">
+  <div class="section-label">// A Loja</div>
+  <div class="section-title">Venha nos <span>visitar</span></div>
+  <div class="info-grid">
+    <div class="info-card"><div class="info-icon">📍</div><div class="info-title">Localização</div><div class="info-txt"><span class="hl">Taquara, Rio de Janeiro</span><br>Zona Oeste do Rio de Janeiro, RJ</div></div>
+    <div class="info-card"><div class="info-icon">🕐</div><div class="info-title">Horário</div><div class="info-txt"><span class="hl">Seg – Sex:</span> 10h às 20h<br><span class="hl">Sábado:</span> 10h às 18h<br><span class="hl">Domingo:</span> Fechado</div></div>
+    <div class="info-card"><div class="info-icon">📱</div><div class="info-title">Contato</div><div class="info-txt"><span class="hl">WhatsApp:</span> (21) 9 XXXX-XXXX<br><span class="hl">Instagram:</span> @multiversotaquara</div></div>
+    <div class="info-card"><div class="info-icon">📦</div><div class="info-title">Como Reservar</div><div class="info-txt">Reserve online, retire em até <span class="hl">3 dias úteis</span>. Gratuito, sem compromisso de compra.</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">MULTI<span>VERSO</span></div>
+  <div class="footer-sub">Loja Geek — Taquara, Rio de Janeiro</div>
+  <div class="footer-links"><a href="#produtos">Produtos</a><a href="#reservas">Reservas</a><a href="#info">Contato</a></div>
+  <div class="footer-copy">© 2025 Multiverso. Feito com ❤️ para a galera geek da Taquara.</div>
+</footer>
+
+<!-- MODAL RESERVA -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div id="formContent">
+      <div class="modal-hd">
+        <div><div class="modal-title">RESERVAR PRODUTO</div><div class="modal-sub">Preencha os dados para reservar</div></div>
+        <button class="modal-close" onclick="fecharModal()">✕</button>
+      </div>
+      <div class="modal-bd">
+        <div class="modal-product" id="modalProduct"></div>
+        <div class="fg"><label class="fl">Nome Completo *</label><input type="text" class="fi" id="iNome" placeholder="Seu nome completo"/></div>
+        <div class="frow">
+          <div class="fg"><label class="fl">WhatsApp *</label><input type="tel" class="fi" id="iTel" placeholder="(21) 9 XXXX-XXXX"/></div>
+          <div class="fg"><label class="fl">Data de Retirada *</label><input type="date" class="fi" id="iData"/></div>
+        </div>
+        <div class="fg"><label class="fl">Quantidade</label>
+          <select class="fs" id="iQtd"><option value="1">1 unidade</option><option value="2">2 unidades</option><option value="3">3 unidades</option></select>
+        </div>
+        <div class="fg"><label class="fl">Observações (opcional)</label><textarea class="ft" id="iObs" placeholder="Edição especial, cor preferida..."></textarea></div>
+        <div id="fErr" class="err"></div>
+        <button class="btn-submit" id="btnSubmit" onclick="confirmarReserva()">⚡ CONFIRMAR RESERVA</button>
+      </div>
+    </div>
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <div class="success-title">RESERVA CONFIRMADA!</div>
+      <div class="success-txt">Sua reserva foi registrada no sistema.<br>Guarde seu código de retirada:</div>
+      <div class="success-code" id="successCodigo"></div>
+      <div class="success-txt">Apresente este código na loja.<br>Você tem <strong>3 dias úteis</strong> para retirar.</div>
+      <a id="wppLink" href="#" target="_blank" class="whatsapp-btn">📱 Confirmar pelo WhatsApp</a>
+      <br>
+      <button class="btn-submit" onclick="fecharModal()" style="margin-top:1.25rem">FECHAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import {
+    getFirestore, collection, doc, addDoc, getDocs, getDoc,
+    updateDoc, query, where, orderBy, serverTimestamp, runTransaction
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // ── CONFIG ──────────────────────────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
+    authDomain: "multiverso-banca.firebaseapp.com",
+    projectId: "multiverso-banca",
+    storageBucket: "multiverso-banca.firebasestorage.app",
+    messagingSenderId: "15821286059",
+    appId: "1:15821286059:web:385ffd2162ad55e005e5ee",
+    measurementId: "G-P197Z8H2N1"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // ── HELPERS ──────────────────────────────────────────────────────────────
+  function gerarCodigo() {
+    return 'MVS-' + Math.random().toString(36).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+  }
+  function fmtPreco(v) { return 'R$ ' + Number(v).toFixed(2).replace('.', ','); }
+  function fmtTel(t)   { return t.replace(/\D/g,''); }
+  function catLabel(c) { return {hq:'HQ / Quadrinhos',manga:'Mangá',funko:'Funko Pop!',card:'Cards / TCG',acessorio:'Acessório'}[c]||c; }
+  function badgeClass(b){ return {new:'badge-new',hot:'badge-hot',limited:'badge-limited'}[b]||''; }
+  function badgeLabel(b){ return {new:'Novo',hot:'🔥 Hot',limited:'⭐ Limitado'}[b]||''; }
+  function statusHtml(s){
+    const cls={pending:'sp',confirmed:'sc',cancelled:'sx',completed:'sd'}[s]||'sp';
+    const lbl={pending:'Aguardando',confirmed:'Confirmado',cancelled:'Cancelado',completed:'Retirado'}[s]||s;
+    return `<span class="sb ${cls}">${lbl}</span>`;
+  }
+
+  // ── STARS ────────────────────────────────────────────────────────────────
+  const se=document.getElementById('stars');
+  for(let i=0;i<120;i++){
+    const s=document.createElement('div'); s.className='star';
+    const sz=Math.random()*2.5+.5;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;animation-delay:${(Math.random()*5).toFixed(1)}s;`;
+    se.appendChild(s);
+  }
+
+  // ── PRODUTOS ─────────────────────────────────────────────────────────────
+  let todosOsProdutos = [];
+  let produtoAtual    = null;
+
+  async function carregarProdutos(cat='todos') {
+    const grid = document.getElementById('productsGrid');
+    grid.innerHTML = '<div class="loader"><div class="spin"></div><div>Carregando...</div></div>';
+    try {
+      const snap = await getDocs(query(collection(db,'produtos'), where('ativo','==',true)));
+      todosOsProdutos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderProdutos(cat);
+    } catch(e) {
+      grid.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar produtos. Verifique sua conexão.</p></div>';
+    }
+  }
+
+  function renderProdutos(cat) {
+    const grid = document.getElementById('productsGrid');
+    const lista = cat === 'todos' ? todosOsProdutos : todosOsProdutos.filter(p => p.categoria === cat);
+    if (!lista.length) {
+      grid.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhum produto nesta categoria.</p></div>';
+      return;
+    }
+    grid.innerHTML = lista.map(p => `
+      <div class="product-card">
+        <div class="product-img">${p.emoji || '📦'}</div>
+        ${p.badge ? `<span class="product-badge ${badgeClass(p.badge)}">${badgeLabel(p.badge)}</span>` : ''}
+        ${p.estoque > 0 && p.estoque <= 2 ? `<span class="stock-warning">Últimas ${p.estoque}!</span>` : ''}
+        <div class="product-info">
+          <div class="product-cat">${catLabel(p.categoria)}</div>
+          <div class="product-name">${p.nome}</div>
+          <div class="product-desc">${p.descricao || ''}</div>
+          <div class="product-footer">
+            <div>
+              <div class="product-price">${fmtPreco(p.preco)}</div>
+              <div class="product-stock">${p.estoque > 0 ? `${p.estoque} disponível` + (p.estoque > 1 ? 'is' : '') : 'Esgotado'}</div>
+            </div>
+            <button class="btn-reserve" onclick='abrirModal(${JSON.stringify(p)})' ${p.estoque === 0 ? 'disabled' : ''}>
+              ${p.estoque === 0 ? 'ESGOTADO' : 'RESERVAR'}
+            </button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.filtrar = function(cat, el) {
+    document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    renderProdutos(cat);
+    document.getElementById('produtos').scrollIntoView({ behavior:'smooth' });
+  };
+
+  // ── MODAL RESERVA ────────────────────────────────────────────────────────
+  window.abrirModal = function(p) {
+    produtoAtual = typeof p === 'string' ? JSON.parse(p) : p;
+    document.getElementById('modalProduct').innerHTML = `
+      <div class="modal-product-emoji">${produtoAtual.emoji || '📦'}</div>
+      <div>
+        <div class="modal-product-name">${produtoAtual.nome}</div>
+        <div class="modal-product-price">${fmtPreco(produtoAtual.preco)}</div>
+      </div>`;
+    const hoje = new Date().toISOString().split('T')[0];
+    document.getElementById('iData').min = hoje;
+    document.getElementById('iData').value = '';
+    document.getElementById('iNome').value = '';
+    document.getElementById('iTel').value  = '';
+    document.getElementById('iObs').value  = '';
+    document.getElementById('fErr').textContent = '';
+    document.getElementById('formContent').style.display = 'block';
+    document.getElementById('successScreen').classList.remove('show');
+    document.getElementById('overlay').classList.add('open');
+  };
+
+  window.fecharModal = function() {
+    document.getElementById('overlay').classList.remove('open');
+    produtoAtual = null;
+    carregarProdutos(document.querySelector('.cat-card.active')?.dataset.cat || 'todos');
+  };
+
+  document.getElementById('overlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('overlay')) window.fecharModal();
+  });
+
+  // ── CRIAR RESERVA ────────────────────────────────────────────────────────
+  window.confirmarReserva = async function() {
+    const nome  = document.getElementById('iNome').value.trim();
+    const tel   = fmtTel(document.getElementById('iTel').value);
+    const data  = document.getElementById('iData').value;
+    const qtd   = parseInt(document.getElementById('iQtd').value);
+    const obs   = document.getElementById('iObs').value.trim();
+    const errEl = document.getElementById('fErr');
+    errEl.textContent = '';
+
+    if (!nome || !tel || !data) { errEl.textContent = 'Preencha nome, WhatsApp e data de retirada.'; return; }
+    if (tel.length < 10)        { errEl.textContent = 'WhatsApp inválido.'; return; }
+
+    const btn = document.getElementById('btnSubmit');
+    btn.disabled = true; btn.textContent = 'Enviando...';
+
+    try {
+      const prodRef  = doc(db, 'produtos', produtoAtual.id);
+      const codigo   = gerarCodigo();
+
+      await runTransaction(db, async tx => {
+        const prodSnap = await tx.get(prodRef);
+        if (!prodSnap.exists()) throw new Error('Produto não encontrado.');
+        const estoque = prodSnap.data().estoque;
+        if (estoque < qtd)      throw new Error(`Estoque insuficiente. Disponível: ${estoque}`);
+
+        const reservaRef = doc(collection(db, 'reservas'));
+        tx.set(reservaRef, {
+          codigo,
+          produtoId:   produtoAtual.id,
+          produtoNome: produtoAtual.nome,
+          produtoEmoji: produtoAtual.emoji || '📦',
+          preco:       produtoAtual.preco,
+          nome, tel, dataRetirada: data, quantidade: qtd, observacoes: obs,
+          status: 'pending',
+          criadoEm: serverTimestamp()
+        });
+        tx.update(prodRef, { estoque: estoque - qtd });
+      });
+
+      document.getElementById('successCodigo').textContent = codigo;
+      const wppMsg = encodeURIComponent(`Olá! Acabei de fazer uma reserva na Multiverso.\n\n📦 Produto: ${produtoAtual.nome}\n🔑 Código: ${codigo}\n📅 Retirada: ${new Date(data+'T12:00').toLocaleDateString('pt-BR')}\n👤 Nome: ${nome}`);
+      document.getElementById('wppLink').href = `https://wa.me/55219XXXXXXXX?text=${wppMsg}`;
+      document.getElementById('formContent').style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+    } catch(e) {
+      errEl.textContent = e.message || 'Erro ao criar reserva. Tente novamente.';
+    } finally {
+      btn.disabled = false; btn.textContent = '⚡ CONFIRMAR RESERVA';
+    }
+  };
+
+  // ── BUSCAR RESERVAS (cliente) ────────────────────────────────────────────
+  window.buscarReservas = async function() {
+    const wpp = fmtTel(document.getElementById('searchWpp').value);
+    if (!wpp) { alert('Digite seu WhatsApp.'); return; }
+    const container = document.getElementById('reservasContainer');
+    container.innerHTML = '<div class="loader"><div class="spin"></div><div>Buscando...</div></div>';
+    try {
+      const snap = await getDocs(query(
+        collection(db,'reservas'),
+        where('tel','==',wpp),
+        orderBy('criadoEm','desc')
+      ));
+      if (snap.empty) {
+        container.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhuma reserva encontrada para este WhatsApp.</p></div>';
+        return;
+      }
+      const rows = snap.docs.map(d => {
+        const r = { id: d.id, ...d.data() };
+        const dt = r.dataRetirada ? new Date(r.dataRetirada+'T12:00').toLocaleDateString('pt-BR') : '—';
+        return `<tr>
+          <td><span style="font-family:'Orbitron',monospace;color:var(--gold);font-size:.75rem">${r.codigo}</span></td>
+          <td>${r.produtoEmoji} <strong>${r.produtoNome}</strong></td>
+          <td>${r.quantidade}x</td>
+          <td style="font-size:.8rem">${dt}</td>
+          <td>${statusHtml(r.status)}</td>
+          <td>${r.status==='pending'?`<button class="btn-cancel" onclick="cancelarReserva('${r.id}','${r.produtoId}',${r.quantidade})">CANCELAR</button>`:'—'}</td>
+        </tr>`;
+      }).join('');
+      container.innerHTML = `<div style="overflow-x:auto"><table class="reservas-table">
+        <thead><tr><th>Código</th><th>Produto</th><th>Qtd.</th><th>Retirada</th><th>Status</th><th>Ação</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+    } catch(e) {
+      container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao buscar. Tente novamente.</p></div>';
+    }
+  };
+
+  window.cancelarReserva = async function(reservaId, produtoId, qtd) {
+    if (!confirm('Deseja cancelar esta reserva?')) return;
+    try {
+      await runTransaction(db, async tx => {
+        const resRef  = doc(db, 'reservas', reservaId);
+        const prodRef = doc(db, 'produtos', produtoId);
+        const prodSnap = await tx.get(prodRef);
+        tx.update(resRef,  { status: 'cancelled' });
+        tx.update(prodRef, { estoque: (prodSnap.data().estoque || 0) + qtd });
+      });
+      buscarReservas();
+    } catch(e) { alert('Erro ao cancelar. Tente novamente.'); }
+  };
+
+  // ── INIT ─────────────────────────────────────────────────────────────────
+  carregarProdutos();
+</script>
+</body>
+</html>
