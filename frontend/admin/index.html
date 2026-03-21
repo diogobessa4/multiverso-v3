@@ -103,6 +103,10 @@
     .badge-limited{background:var(--neon3);color:#fff;font-size:.6rem;padding:2px 8px;font-family:'Orbitron',monospace;font-weight:700;}
     .stock-ok{color:var(--success);}.stock-low{color:var(--gold);}.stock-zero{color:var(--neon2);}
     @media(max-width:768px){.sidebar{display:none;}.fgrid{grid-template-columns:1fr;}}
+    .img-upload-area{border:2px dashed var(--border);padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s;background:var(--bg);}
+    .img-upload-area:hover{border-color:var(--neon3);}
+    .img-preview{max-width:100%;max-height:180px;object-fit:contain;margin-top:.75rem;display:none;border:1px solid var(--border);}
+    .img-placeholder{color:var(--muted);font-size:.82rem;pointer-events:none;}
   </style>
 </head>
 <body>
@@ -186,7 +190,14 @@
               <div class="fg"><label class="fl">Preco (R$) *</label><input type="number" class="fi" id="npPreco" placeholder="0.00" step="0.01" min="0"/></div>
               <div class="fg"><label class="fl">Estoque *</label><input type="number" class="fi" id="npEstoque" placeholder="1" min="0" value="1"/></div>
             </div>
-            <div class="fg"><label class="fl">Emoji</label><input type="text" class="fi" id="npEmoji" value="📦" style="width:80px;font-size:1.4rem"/></div>
+            <div class="fg">
+              <label class="fl">Foto do Produto</label>
+              <div class="img-upload-area" onclick="document.getElementById('npFoto').click()">
+                <div class="img-placeholder" id="npFotoPlaceholder">📷 Clique para selecionar uma imagem</div>
+                <img class="img-preview" id="npFotoPreview" alt="Preview"/>
+              </div>
+              <input type="file" id="npFoto" accept="image/*" style="display:none" onchange="previewImagem('npFoto','npFotoPreview','npFotoPlaceholder')"/>
+            </div>
             <div id="npErr" class="err"></div><div id="npOk" class="ok"></div>
             <button class="btn btn-purple" style="padding:14px 32px" onclick="criarProduto()">CADASTRAR</button>
           </div>
@@ -211,7 +222,15 @@
         <div class="fg"><label class="fl">Preco</label><input type="number" class="fi" id="epPreco" step="0.01"/></div>
         <div class="fg"><label class="fl">Estoque</label><input type="number" class="fi" id="epEstoque" min="0"/></div>
       </div>
-      <div class="fg"><label class="fl">Emoji</label><input type="text" class="fi" id="epEmoji" style="width:80px;font-size:1.4rem"/></div>
+      <div class="fg">
+        <label class="fl">Foto do Produto</label>
+        <div class="img-upload-area" onclick="document.getElementById('epFoto').click()">
+          <div class="img-placeholder" id="epFotoPlaceholder">📷 Clique para selecionar uma imagem</div>
+          <img class="img-preview" id="epFotoPreview" alt="Foto atual"/>
+        </div>
+        <input type="file" id="epFoto" accept="image/*" style="display:none" onchange="previewImagem('epFoto','epFotoPreview','epFotoPlaceholder')"/>
+        <input type="hidden" id="epFotoAtual"/>
+      </div>
       <div id="epErr" class="err"></div>
       <button class="btn btn-neon" style="width:100%;padding:14px;margin-top:.5rem" onclick="salvarEdit()">SALVAR</button>
     </div>
@@ -236,6 +255,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, getDocs, getDoc, updateDoc, query, where, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
@@ -249,6 +269,7 @@ const firebaseConfig = {
 const app      = initializeApp(firebaseConfig);
 const db       = getFirestore(app);
 const auth     = getAuth(app);
+const storage  = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 // E-mails autorizados ficam na colecao "admins" do Firestore — nunca no codigo
@@ -452,9 +473,12 @@ async function carregarProdutos() {
     var lista = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
     if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhum produto.</div>'; return; }
     var rows = lista.map(function(p) {
-      var editData = JSON.stringify({id:p.id, nome:p.nome, descricao:p.descricao||'', categoria:p.categoria, badge:p.badge||'', preco:p.preco, estoque:p.estoque, emoji:p.emoji||'📦'}).replace(/"/g, '&quot;');
+      var editData = JSON.stringify({id:p.id, nome:p.nome, descricao:p.descricao||'', categoria:p.categoria, badge:p.badge||'', preco:p.preco, estoque:p.estoque, foto:p.foto||''}).replace(/"/g, '&quot;');
+      var imgHtml = p.foto
+        ? '<img src="' + p.foto + '" style="width:38px;height:38px;object-fit:cover;vertical-align:middle;margin-right:.5rem;border:1px solid var(--border)">'
+        : '<span style="font-size:1.3rem;vertical-align:middle;margin-right:.4rem">' + (p.emoji || '📦') + '</span>';
       return '<tr>' +
-        '<td>' + p.emoji + ' <strong>' + p.nome + '</strong></td>' +
+        '<td>' + imgHtml + '<strong>' + p.nome + '</strong></td>' +
         '<td style="font-size:.8rem;color:var(--muted)">' + p.categoria + '</td>' +
         '<td style="font-family:\'Orbitron\',monospace;color:var(--gold)">' + fmtPreco(p.preco) + '</td>' +
         '<td class="' + stockCls(p.estoque) + '" style="font-family:\'Orbitron\',monospace;font-weight:700">' + p.estoque + '</td>' +
@@ -470,21 +494,46 @@ async function carregarProdutos() {
 
 window.abrirEdit = function(p) {
   var prod = typeof p === 'string' ? JSON.parse(p) : p;
-  document.getElementById('epId').value      = prod.id;
-  document.getElementById('epNome').value    = prod.nome;
-  document.getElementById('epDesc').value    = prod.descricao || '';
-  document.getElementById('epCat').value     = prod.categoria;
-  document.getElementById('epBadge').value   = prod.badge || '';
-  document.getElementById('epPreco').value   = prod.preco;
-  document.getElementById('epEstoque').value = prod.estoque;
-  document.getElementById('epEmoji').value   = prod.emoji || '📦';
+  document.getElementById('epId').value        = prod.id;
+  document.getElementById('epNome').value      = prod.nome;
+  document.getElementById('epDesc').value      = prod.descricao || '';
+  document.getElementById('epCat').value       = prod.categoria;
+  document.getElementById('epBadge').value     = prod.badge || '';
+  document.getElementById('epPreco').value     = prod.preco;
+  document.getElementById('epEstoque').value   = prod.estoque;
+  document.getElementById('epFotoAtual').value = prod.foto || '';
+  document.getElementById('epFoto').value      = '';
+  var preview     = document.getElementById('epFotoPreview');
+  var placeholder = document.getElementById('epFotoPlaceholder');
+  if (prod.foto) {
+    preview.src = prod.foto;
+    preview.style.display = 'block';
+    placeholder.textContent = '📷 Clique para alterar a imagem';
+  } else {
+    preview.style.display = 'none';
+    placeholder.textContent = '📷 Clique para selecionar uma imagem';
+  }
   document.getElementById('epErr').textContent = '';
   document.getElementById('editOverlay').classList.add('open');
 };
 window.fecharEdit = function() { document.getElementById('editOverlay').classList.remove('open'); };
 
 window.salvarEdit = async function() {
-  var id = document.getElementById('epId').value;
+  var id       = document.getElementById('epId').value;
+  var fotoAtual = document.getElementById('epFotoAtual').value;
+  var fotoFile  = document.getElementById('epFoto').files[0];
+  var fotoUrl   = fotoAtual;
+  document.getElementById('epErr').textContent = '';
+  if (fotoFile) {
+    try {
+      document.getElementById('epErr').textContent = 'Enviando imagem...';
+      fotoUrl = await uploadImagem(fotoFile, 'produtos/' + Date.now() + '_' + fotoFile.name);
+      document.getElementById('epErr').textContent = '';
+    } catch(e) {
+      document.getElementById('epErr').textContent = 'Erro ao enviar imagem.';
+      return;
+    }
+  }
   var dados = {
     nome:      document.getElementById('epNome').value,
     descricao: document.getElementById('epDesc').value,
@@ -492,7 +541,8 @@ window.salvarEdit = async function() {
     badge:     document.getElementById('epBadge').value || null,
     preco:     parseFloat(document.getElementById('epPreco').value),
     estoque:   parseInt(document.getElementById('epEstoque').value),
-    emoji:     document.getElementById('epEmoji').value || '📦'
+    foto:      fotoUrl,
+    emoji:     fotoUrl ? '' : '📦'
   };
   try {
     await updateDoc(doc(db, 'produtos', id), dados);
@@ -507,6 +557,25 @@ window.desativar = async function(id, nome) {
   carregarProdutos();
 };
 
+window.previewImagem = function(inputId, previewId, placeholderId) {
+  var file = document.getElementById(inputId).files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var preview = document.getElementById(previewId);
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById(placeholderId).textContent = '✅ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+};
+
+async function uploadImagem(file, path) {
+  var storageRef = ref(storage, path);
+  var snap = await uploadBytes(storageRef, file);
+  return await getDownloadURL(snap.ref);
+}
+
 window.criarProduto = async function() {
   var nome    = document.getElementById('npNome').value.trim();
   var preco   = parseFloat(document.getElementById('npPreco').value);
@@ -517,6 +586,18 @@ window.criarProduto = async function() {
     document.getElementById('npErr').textContent = 'Preencha nome, preco e estoque.';
     return;
   }
+  var fotoUrl = '';
+  var fotoFile = document.getElementById('npFoto').files[0];
+  if (fotoFile) {
+    try {
+      document.getElementById('npErr').textContent = 'Enviando imagem...';
+      fotoUrl = await uploadImagem(fotoFile, 'produtos/' + Date.now() + '_' + fotoFile.name);
+      document.getElementById('npErr').textContent = '';
+    } catch(e) {
+      document.getElementById('npErr').textContent = 'Erro ao enviar imagem.';
+      return;
+    }
+  }
   try {
     await addDoc(collection(db, 'produtos'), {
       nome:      nome,
@@ -525,7 +606,8 @@ window.criarProduto = async function() {
       badge:     document.getElementById('npBadge').value || null,
       preco:     preco,
       estoque:   estoque,
-      emoji:     document.getElementById('npEmoji').value || '📦',
+      foto:      fotoUrl,
+      emoji:     fotoUrl ? '' : '📦',
       ativo:     true,
       criadoEm:  serverTimestamp()
     });
@@ -534,7 +616,9 @@ window.criarProduto = async function() {
     document.getElementById('npDesc').value    = '';
     document.getElementById('npPreco').value   = '';
     document.getElementById('npEstoque').value = '1';
-    document.getElementById('npEmoji').value   = '📦';
+    document.getElementById('npFoto').value    = '';
+    document.getElementById('npFotoPreview').style.display = 'none';
+    document.getElementById('npFotoPlaceholder').textContent = '📷 Clique para selecionar uma imagem';
     document.getElementById('npBadge').value   = '';
   } catch(e) { document.getElementById('npErr').textContent = 'Erro ao cadastrar.'; }
 };
