@@ -255,7 +255,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getFirestore, collection, doc, addDoc, getDocs, getDoc, updateDoc, query, where, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
@@ -269,7 +268,6 @@ const firebaseConfig = {
 const app      = initializeApp(firebaseConfig);
 const db       = getFirestore(app);
 const auth     = getAuth(app);
-const storage  = getStorage(app);
 const provider = new GoogleAuthProvider();
 
 // E-mails autorizados ficam na colecao "admins" do Firestore — nunca no codigo
@@ -526,11 +524,11 @@ window.salvarEdit = async function() {
   document.getElementById('epErr').textContent = '';
   if (fotoFile) {
     try {
-      document.getElementById('epErr').textContent = 'Enviando imagem...';
-      fotoUrl = await uploadImagem(fotoFile, 'produtos/' + Date.now() + '_' + fotoFile.name);
+      document.getElementById('epErr').textContent = 'Processando imagem...';
+      fotoUrl = await prepararFoto(fotoFile);
       document.getElementById('epErr').textContent = '';
     } catch(e) {
-      document.getElementById('epErr').textContent = 'Erro ao enviar imagem.';
+      document.getElementById('epErr').textContent = 'Erro ao processar imagem.';
       return;
     }
   }
@@ -587,11 +585,13 @@ function comprimirImagem(file, maxWidth, qualidade) {
   });
 }
 
-async function uploadImagem(file, path) {
+async function prepararFoto(file) {
   var blob = await comprimirImagem(file, 800, 0.82);
-  var storageRef = ref(storage, path);
-  var snap = await uploadBytes(storageRef, blob);
-  return await getDownloadURL(snap.ref);
+  return new Promise(function(resolve) {
+    var reader = new FileReader();
+    reader.onload = function(e) { resolve(e.target.result); };
+    reader.readAsDataURL(blob);
+  });
 }
 
 window.criarProduto = async function() {
@@ -605,16 +605,26 @@ window.criarProduto = async function() {
     return;
   }
   var fotoFile = document.getElementById('npFoto').files[0];
+  var fotoData = '';
+  if (fotoFile) {
+    try {
+      document.getElementById('npOk').textContent = 'Processando imagem...';
+      fotoData = await prepararFoto(fotoFile);
+    } catch(e) {
+      document.getElementById('npErr').textContent = 'Erro ao processar imagem.';
+      return;
+    }
+  }
   try {
-    var docRef = await addDoc(collection(db, 'produtos'), {
+    await addDoc(collection(db, 'produtos'), {
       nome:      nome,
       descricao: document.getElementById('npDesc').value,
       categoria: document.getElementById('npCat').value,
       badge:     document.getElementById('npBadge').value || null,
       preco:     preco,
       estoque:   estoque,
-      foto:      '',
-      emoji:     '📦',
+      foto:      fotoData,
+      emoji:     fotoData ? '' : '📦',
       ativo:     true,
       criadoEm:  serverTimestamp()
     });
@@ -627,15 +637,6 @@ window.criarProduto = async function() {
     document.getElementById('npFotoPreview').style.display = 'none';
     document.getElementById('npFotoPlaceholder').textContent = '📷 Clique para selecionar uma imagem';
     document.getElementById('npBadge').value   = '';
-    if (fotoFile) {
-      document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado! Enviando foto...';
-      uploadImagem(fotoFile, 'produtos/' + Date.now() + '_' + fotoFile.name).then(function(url) {
-        updateDoc(docRef, { foto: url, emoji: '' });
-        document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado com foto!';
-      }).catch(function() {
-        document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado (foto falhou).';
-      });
-    }
   } catch(e) { document.getElementById('npErr').textContent = 'Erro ao cadastrar.'; }
 };
 
