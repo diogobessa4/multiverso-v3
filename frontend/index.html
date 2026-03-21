@@ -72,7 +72,8 @@
     .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;}
     .product-card{background:var(--card);border:1px solid var(--border);position:relative;overflow:hidden;transition:all .3s;}
     .product-card:hover{border-color:var(--neon3);box-shadow:0 0 30px rgba(168,85,247,.2);transform:translateY(-4px);}
-    .product-img{width:100%;height:200px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:5rem;border-bottom:1px solid var(--border);}
+    .product-img{width:100%;height:200px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:5rem;border-bottom:1px solid var(--border);overflow:hidden;}
+    .product-img img{width:100%;height:100%;object-fit:cover;}
     .product-badge{position:absolute;top:12px;left:12px;font-size:.62rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;font-family:'Orbitron',monospace;}
     .badge-new{background:var(--neon2);color:#fff;}
     .badge-hot{background:var(--gold);color:#000;}
@@ -364,7 +365,7 @@
     }
     grid.innerHTML = lista.map(p => `
       <div class="product-card">
-        <div class="product-img">${p.emoji || '📦'}</div>
+        <div class="product-img">${p.foto ? `<img src="${p.foto}" alt="${p.nome}" loading="lazy">` : (p.emoji || '📦')}</div>
         ${p.badge ? `<span class="product-badge ${badgeClass(p.badge)}">${badgeLabel(p.badge)}</span>` : ''}
         ${p.estoque > 0 && p.estoque <= 2 ? `<span class="stock-warning">Últimas ${p.estoque}!</span>` : ''}
         <div class="product-info">
@@ -396,7 +397,7 @@
   window.abrirModal = function(p) {
     produtoAtual = typeof p === 'string' ? JSON.parse(p) : p;
     document.getElementById('modalProduct').innerHTML = `
-      <div class="modal-product-emoji">${produtoAtual.emoji || '📦'}</div>
+      <div class="modal-product-emoji">${produtoAtual.foto ? `<img src="${produtoAtual.foto}" alt="${produtoAtual.nome}" style="width:56px;height:56px;object-fit:cover;border:1px solid var(--border)">` : (produtoAtual.emoji || '📦')}</div>
       <div>
         <div class="modal-product-name">${produtoAtual.nome}</div>
         <div class="modal-product-price">${fmtPreco(produtoAtual.preco)}</div>
