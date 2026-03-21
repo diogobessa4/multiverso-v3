@@ -570,9 +570,27 @@ window.previewImagem = function(inputId, previewId, placeholderId) {
   reader.readAsDataURL(file);
 };
 
+function comprimirImagem(file, maxWidth, qualidade) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function() {
+      URL.revokeObjectURL(url);
+      var w = img.width, h = img.height;
+      if (w > maxWidth) { h = Math.round(h * maxWidth / w); w = maxWidth; }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(resolve, 'image/jpeg', qualidade);
+    };
+    img.src = url;
+  });
+}
+
 async function uploadImagem(file, path) {
+  var blob = await comprimirImagem(file, 800, 0.82);
   var storageRef = ref(storage, path);
-  var snap = await uploadBytes(storageRef, file);
+  var snap = await uploadBytes(storageRef, blob);
   return await getDownloadURL(snap.ref);
 }
 
