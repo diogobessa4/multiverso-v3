@@ -604,28 +604,17 @@ window.criarProduto = async function() {
     document.getElementById('npErr').textContent = 'Preencha nome, preco e estoque.';
     return;
   }
-  var fotoUrl = '';
   var fotoFile = document.getElementById('npFoto').files[0];
-  if (fotoFile) {
-    try {
-      document.getElementById('npErr').textContent = 'Enviando imagem...';
-      fotoUrl = await uploadImagem(fotoFile, 'produtos/' + Date.now() + '_' + fotoFile.name);
-      document.getElementById('npErr').textContent = '';
-    } catch(e) {
-      document.getElementById('npErr').textContent = 'Erro ao enviar imagem.';
-      return;
-    }
-  }
   try {
-    await addDoc(collection(db, 'produtos'), {
+    var docRef = await addDoc(collection(db, 'produtos'), {
       nome:      nome,
       descricao: document.getElementById('npDesc').value,
       categoria: document.getElementById('npCat').value,
       badge:     document.getElementById('npBadge').value || null,
       preco:     preco,
       estoque:   estoque,
-      foto:      fotoUrl,
-      emoji:     fotoUrl ? '' : '📦',
+      foto:      '',
+      emoji:     '📦',
       ativo:     true,
       criadoEm:  serverTimestamp()
     });
@@ -638,6 +627,15 @@ window.criarProduto = async function() {
     document.getElementById('npFotoPreview').style.display = 'none';
     document.getElementById('npFotoPlaceholder').textContent = '📷 Clique para selecionar uma imagem';
     document.getElementById('npBadge').value   = '';
+    if (fotoFile) {
+      document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado! Enviando foto...';
+      uploadImagem(fotoFile, 'produtos/' + Date.now() + '_' + fotoFile.name).then(function(url) {
+        updateDoc(docRef, { foto: url, emoji: '' });
+        document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado com foto!';
+      }).catch(function() {
+        document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado (foto falhou).';
+      });
+    }
   } catch(e) { document.getElementById('npErr').textContent = 'Erro ao cadastrar.'; }
 };
 
