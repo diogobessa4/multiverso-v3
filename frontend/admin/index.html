@@ -162,6 +162,10 @@
       </div>
       <div class="tab" id="tab-reservas">
         <div class="card"><div class="card-hd"><div class="card-title">Todas as Reservas</div>
+          <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap">
+          <input type="text" class="fi" id="searchAdminRes" placeholder="Buscar por cliente..." style="max-width:200px;padding:7px 10px;font-size:.8rem" oninput="filtrarPorCliente(this.value)"/>
+          <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
+          </div>
           <div class="filters">
             <button class="fbtn active" onclick="filtrarRes('',this)">Todas</button>
             <button class="fbtn" onclick="filtrarRes('pending',this)">Aguardando</button>
@@ -401,31 +405,66 @@ async function carregarDashboard() {
   } catch(e) { console.error(e); }
 }
 
+var reservasCached = [];
+var termoBuscaAdmin = '';
+
+function renderTabelaReservas(lista) {
+  var wrap = document.getElementById('reservasWrap');
+  if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhuma reserva encontrada.</div>'; return; }
+  var rows = lista.map(function(r) {
+    var data = r.dataRetirada ? new Date(r.dataRetirada + 'T12:00').toLocaleDateString('pt-BR') : '--';
+    return '<tr>' +
+      '<td><span style="font-family:\'Orbitron\',monospace;color:var(--gold);font-size:.75rem">' + r.codigo + '</span></td>' +
+      '<td>' + r.produtoEmoji + ' ' + r.produtoNome + '</td>' +
+      '<td>' + r.nome + '</td>' +
+      '<td style="font-size:.8rem;color:var(--muted)">' + r.tel + '</td>' +
+      '<td style="font-size:.8rem">' + data + '</td>' +
+      '<td>' + r.quantidade + 'x</td>' +
+      '<td>' + statusHtml(r.status) + '</td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="abrirStatus(\'' + r.id + '\',\'' + r.status + '\',\'' + r.codigo + '\')">Editar</button></td>' +
+      '</tr>';
+  }).join('');
+  wrap.innerHTML = '<table><thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>WhatsApp</th><th>Retirada</th><th>Qtd</th><th>Status</th><th>Acao</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
 async function carregarReservas(filtro) {
   filtroStatusAtual = filtro;
   var wrap = document.getElementById('reservasWrap');
   wrap.innerHTML = '<div class="loader"><div class="spin"></div></div>';
   try {
     var snap = await getDocs(query(collection(db, 'reservas'), orderBy('criadoEm', 'desc')));
-    var lista = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    reservasCached = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    var lista = reservasCached;
     if (filtro) lista = lista.filter(function(r) { return r.status === filtro; });
-    if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhuma reserva encontrada.</div>'; return; }
-    var rows = lista.map(function(r) {
-      var data = r.dataRetirada ? new Date(r.dataRetirada + 'T12:00').toLocaleDateString('pt-BR') : '--';
-      return '<tr>' +
-        '<td><span style="font-family:\'Orbitron\',monospace;color:var(--gold);font-size:.75rem">' + r.codigo + '</span></td>' +
-        '<td>' + r.produtoEmoji + ' ' + r.produtoNome + '</td>' +
-        '<td>' + r.nome + '</td>' +
-        '<td style="font-size:.8rem;color:var(--muted)">' + r.tel + '</td>' +
-        '<td style="font-size:.8rem">' + data + '</td>' +
-        '<td>' + r.quantidade + 'x</td>' +
-        '<td>' + statusHtml(r.status) + '</td>' +
-        '<td><button class="btn btn-ghost btn-sm" onclick="abrirStatus(\'' + r.id + '\',\'' + r.status + '\',\'' + r.codigo + '\')">Editar</button></td>' +
-        '</tr>';
-    }).join('');
-    wrap.innerHTML = '<table><thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>WhatsApp</th><th>Retirada</th><th>Qtd</th><th>Status</th><th>Acao</th></tr></thead><tbody>' + rows + '</tbody></table>';
+    if (termoBuscaAdmin) lista = lista.filter(function(r) { return (r.nome||'').toLowerCase().includes(termoBuscaAdmin); });
+    renderTabelaReservas(lista);
   } catch(e) { wrap.innerHTML = '<div class="empty">Erro ao carregar.</div>'; }
 }
+
+window.filtrarPorCliente = function(termo) {
+  termoBuscaAdmin = termo.trim().toLowerCase();
+  var lista = reservasCached;
+  if (filtroStatusAtual) lista = lista.filter(function(r) { return r.status === filtroStatusAtual; });
+  if (termoBuscaAdmin) lista = lista.filter(function(r) { return (r.nome||'').toLowerCase().includes(termoBuscaAdmin); });
+  renderTabelaReservas(lista);
+};
+
+window.exportarCSV = async function() {
+  try {
+    var snap = await getDocs(query(collection(db, 'reservas'), orderBy('criadoEm', 'desc')));
+    var linhas = [['Codigo','Nome','WhatsApp','Produto','Preco','Qtd','Data Retirada','Status','Criado em']];
+    snap.docs.forEach(function(d) {
+      var r = d.data();
+      var dt = r.criadoEm && r.criadoEm.toDate ? r.criadoEm.toDate().toLocaleDateString('pt-BR') : '';
+      linhas.push([r.codigo||'', r.nome||'', r.tel||'', r.produtoNome||'', r.preco||'', r.quantidade||'', r.dataRetirada||'', r.status||'', dt]);
+    });
+    var csv = linhas.map(function(l) { return l.map(function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
+    var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'reservas_multiverso.csv'; a.click();
+    URL.revokeObjectURL(url);
+  } catch(e) { alert('Erro ao exportar.'); }
+};
 
 window.filtrarRes = function(s, el) {
   document.querySelectorAll('.fbtn').forEach(function(b) { b.classList.remove('active'); });

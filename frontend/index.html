@@ -171,6 +171,9 @@
     .footer-links a:hover{color:var(--neon);}
     .footer-copy{color:#334155;font-size:.75rem;}
 
+    .search-products{margin-bottom:1.5rem;}
+    .btn-wpp{display:block;width:100%;background:transparent;border:1px solid #25d366;color:#25d366;font-family:'Orbitron',monospace;font-size:.56rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:8px;cursor:pointer;transition:all .2s;margin-top:.6rem;text-decoration:none;text-align:center;}
+    .btn-wpp:hover{background:#25d366;color:#fff;}
     @media(max-width:640px){nav ul{display:none;}.frow{grid-template-columns:1fr;}.hero h1{letter-spacing:-1px;}}
   </style>
 </head>
@@ -181,6 +184,7 @@
 <nav>
   <a class="logo" href="#">MULTI<span>VERSO</span></a>
   <ul>
+    <li><a href="#lancamentos">Novidades</a></li>
     <li><a href="#produtos">Produtos</a></li>
     <li><a href="#reservas">Minhas Reservas</a></li>
     <li><a href="#info">A Loja</a></li>
@@ -218,10 +222,20 @@
   </div>
 </div>
 
+<!-- LANÇAMENTOS -->
+<div class="section" id="lancamentos" style="display:none">
+  <div class="section-label">// Chegando agora</div>
+  <div class="section-title">Últimas <span>Novidades</span></div>
+  <div id="lancamentosGrid" class="products-grid"></div>
+</div>
+
 <!-- PRODUTOS -->
 <div class="section" id="produtos">
   <div class="section-label">// Catálogo</div>
   <div class="section-title">Produtos em <span>Destaque</span></div>
+  <div class="search-products">
+    <input type="text" class="fi" id="searchProduto" placeholder="Buscar produto pelo nome..." oninput="filtrarPorNome(this.value)"/>
+  </div>
   <div id="productsGrid" class="products-grid">
     <div class="loader"><div class="spin"></div><div>Carregando produtos...</div></div>
   </div>
@@ -344,6 +358,8 @@
   // ── PRODUTOS ─────────────────────────────────────────────────────────────
   let todosOsProdutos = [];
   let produtoAtual    = null;
+  let termoBusca      = '';
+  const _prodMap      = {};
 
   async function carregarProdutos(cat='todos') {
     const grid = document.getElementById('productsGrid');
@@ -351,20 +367,17 @@
     try {
       const snap = await getDocs(query(collection(db,'produtos'), where('ativo','==',true)));
       todosOsProdutos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      todosOsProdutos.forEach(p => _prodMap[p.id] = p);
+      renderLancamentos();
       renderProdutos(cat);
     } catch(e) {
       grid.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar produtos. Verifique sua conexão.</p></div>';
     }
   }
 
-  function renderProdutos(cat) {
-    const grid = document.getElementById('productsGrid');
-    const lista = cat === 'todos' ? todosOsProdutos : todosOsProdutos.filter(p => p.categoria === cat);
-    if (!lista.length) {
-      grid.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhum produto nesta categoria.</p></div>';
-      return;
-    }
-    grid.innerHTML = lista.map(p => `
+  function cardHtml(p) {
+    const wppTxt = encodeURIComponent(`Olá! Tenho interesse no produto: *${p.nome}*`);
+    return `
       <div class="product-card">
         <div class="product-img">${p.foto ? `<img src="${p.foto}" alt="${p.nome}" loading="lazy">` : (p.emoji || '📦')}</div>
         ${p.badge ? `<span class="product-badge ${badgeClass(p.badge)}">${badgeLabel(p.badge)}</span>` : ''}
@@ -378,25 +391,55 @@
               <div class="product-price">${fmtPreco(p.preco)}</div>
               <div class="product-stock">${p.estoque > 0 ? `${p.estoque} disponível` + (p.estoque > 1 ? 'is' : '') : 'Esgotado'}</div>
             </div>
-            <button class="btn-reserve" onclick='abrirModal(${JSON.stringify(p)})' ${p.estoque === 0 ? 'disabled' : ''}>
+            <button class="btn-reserve" onclick='abrirModal("${p.id}")' ${p.estoque === 0 ? 'disabled' : ''}>
               ${p.estoque === 0 ? 'ESGOTADO' : 'RESERVAR'}
             </button>
           </div>
+          <a href="https://wa.me/5521987194908?text=${wppTxt}" target="_blank" class="btn-wpp">💬 Tirar dúvida</a>
         </div>
-      </div>
-    `).join('');
+      </div>`;
   }
+
+  function renderLancamentos() {
+    const novidades = todosOsProdutos.filter(p => p.badge === 'new');
+    const lista = novidades.length
+      ? novidades
+      : [...todosOsProdutos].sort((a,b) => (b.criadoEm?.seconds||0) - (a.criadoEm?.seconds||0)).slice(0,4);
+    const sec = document.getElementById('lancamentos');
+    if (!lista.length) { sec.style.display = 'none'; return; }
+    sec.style.display = 'block';
+    document.getElementById('lancamentosGrid').innerHTML = lista.map(cardHtml).join('');
+  }
+
+  function renderProdutos(cat) {
+    const grid = document.getElementById('productsGrid');
+    let lista = cat === 'todos' ? todosOsProdutos : todosOsProdutos.filter(p => p.categoria === cat);
+    if (termoBusca) lista = lista.filter(p => p.nome.toLowerCase().includes(termoBusca));
+    if (!lista.length) {
+      grid.innerHTML = `<div class="empty-state"><div class="ei">📭</div><p>${termoBusca ? 'Nenhum produto encontrado para "' + termoBusca + '".' : 'Nenhum produto nesta categoria.'}</p></div>`;
+      return;
+    }
+    grid.innerHTML = lista.map(cardHtml).join('');
+  }
+
+  window.filtrarPorNome = function(termo) {
+    termoBusca = termo.trim().toLowerCase();
+    const cat = document.querySelector('.cat-card.active')?.dataset.cat || 'todos';
+    renderProdutos(cat);
+  };
 
   window.filtrar = function(cat, el) {
     document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
+    termoBusca = '';
+    document.getElementById('searchProduto').value = '';
     renderProdutos(cat);
     document.getElementById('produtos').scrollIntoView({ behavior:'smooth' });
   };
 
   // ── MODAL RESERVA ────────────────────────────────────────────────────────
   window.abrirModal = function(p) {
-    produtoAtual = typeof p === 'string' ? JSON.parse(p) : p;
+    produtoAtual = (typeof p === 'string' && _prodMap[p]) ? _prodMap[p] : (typeof p === 'string' ? JSON.parse(p) : p);
     document.getElementById('modalProduct').innerHTML = `
       <div class="modal-product-emoji">${produtoAtual.foto ? `<img src="${produtoAtual.foto}" alt="${produtoAtual.nome}" style="width:56px;height:56px;object-fit:cover;border:1px solid var(--border)">` : (produtoAtual.emoji || '📦')}</div>
       <div>
@@ -442,6 +485,18 @@
     btn.disabled = true; btn.textContent = 'Enviando...';
 
     try {
+      const ativasSnap = await getDocs(query(
+        collection(db,'reservas'),
+        where('tel','==',tel),
+        where('produtoId','==',produtoAtual.id)
+      ));
+      const ativas = ativasSnap.docs.filter(d => ['pending','confirmed'].includes(d.data().status));
+      if (ativas.length > 0) {
+        errEl.textContent = 'Você já tem uma reserva ativa para este produto.';
+        btn.disabled = false; btn.textContent = '⚡ CONFIRMAR RESERVA';
+        return;
+      }
+
       const prodRef  = doc(db, 'produtos', produtoAtual.id);
       const codigo   = gerarCodigo();
 
@@ -467,9 +522,11 @@
 
       document.getElementById('successCodigo').textContent = codigo;
       const wppMsg = encodeURIComponent(`Olá! Acabei de fazer uma reserva na Multiverso.\n\n📦 Produto: ${produtoAtual.nome}\n🔑 Código: ${codigo}\n📅 Retirada: ${new Date(data+'T12:00').toLocaleDateString('pt-BR')}\n👤 Nome: ${nome}`);
-      document.getElementById('wppLink').href = `https://wa.me/5521987194908?text=${wppMsg}`;
+      const wppUrl = `https://wa.me/5521987194908?text=${wppMsg}`;
+      document.getElementById('wppLink').href = wppUrl;
       document.getElementById('formContent').style.display = 'none';
       document.getElementById('successScreen').classList.add('show');
+      setTimeout(() => window.open(wppUrl, '_blank'), 1500);
     } catch(e) {
       errEl.textContent = e.message || 'Erro ao criar reserva. Tente novamente.';
     } finally {
