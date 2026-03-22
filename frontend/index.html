@@ -214,6 +214,7 @@
     <div class="cat-card" data-cat="funko" onclick="filtrar('funko',this)"><span class="cat-icon">🎭</span><div class="cat-name">Funkos</div><div class="cat-sub">Pop! Vinyl</div></div>
     <div class="cat-card" data-cat="card" onclick="filtrar('card',this)"><span class="cat-icon">🃏</span><div class="cat-name">Cards</div><div class="cat-sub">TCG & colecionáveis</div></div>
     <div class="cat-card" data-cat="acessorio" onclick="filtrar('acessorio',this)"><span class="cat-icon">🎮</span><div class="cat-name">Acessórios</div><div class="cat-sub">Posters, pins e +</div></div>
+    <div class="cat-card" data-cat="action_figure" onclick="filtrar('action_figure',this)"><span class="cat-icon">🦸</span><div class="cat-name">Action Figures</div><div class="cat-sub">Colecionáveis e +</div></div>
   </div>
 </div>
 
@@ -322,7 +323,7 @@
   }
   function fmtPreco(v) { return 'R$ ' + Number(v).toFixed(2).replace('.', ','); }
   function fmtTel(t)   { return t.replace(/\D/g,''); }
-  function catLabel(c) { return {hq:'HQ / Quadrinhos',manga:'Mangá',funko:'Funko Pop!',card:'Cards / TCG',acessorio:'Acessório'}[c]||c; }
+  function catLabel(c) { return {hq:'HQ / Quadrinhos',manga:'Mangá',funko:'Funko Pop!',card:'Cards / TCG',acessorio:'Acessório',action_figure:'Action Figure'}[c]||c; }
   function badgeClass(b){ return {new:'badge-new',hot:'badge-hot',limited:'badge-limited'}[b]||''; }
   function badgeLabel(b){ return {new:'Novo',hot:'🔥 Hot',limited:'⭐ Limitado'}[b]||''; }
   function statusHtml(s){
