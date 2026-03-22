@@ -231,11 +231,11 @@
   <div class="section-label">// Painel do Cliente</div>
   <div class="section-title">Minhas <span>Reservas</span></div>
   <div class="search-bar">
-    <input type="tel" class="fi" id="searchWpp" placeholder="Digite seu WhatsApp para buscar reservas..."/>
+    <input type="text" class="fi" id="searchNome" placeholder="Digite seu nome para buscar reservas..."/>
     <button class="btn-primary" onclick="buscarReservas()">BUSCAR</button>
   </div>
   <div id="reservasContainer">
-    <div class="empty-state"><div class="ei">🔍</div><p>Digite seu WhatsApp acima para ver suas reservas.</p></div>
+    <div class="empty-state"><div class="ei">🔍</div><p>Digite seu nome acima para ver suas reservas.</p></div>
   </div>
 </div>
 
@@ -478,21 +478,21 @@
 
   // ── BUSCAR RESERVAS (cliente) ────────────────────────────────────────────
   window.buscarReservas = async function() {
-    const wpp = fmtTel(document.getElementById('searchWpp').value);
-    if (!wpp) { alert('Digite seu WhatsApp.'); return; }
+    const nome = document.getElementById('searchNome').value.trim().toLowerCase();
+    if (!nome) { alert('Digite seu nome.'); return; }
     const container = document.getElementById('reservasContainer');
     container.innerHTML = '<div class="loader"><div class="spin"></div><div>Buscando...</div></div>';
     try {
       const snap = await getDocs(query(
         collection(db,'reservas'),
-        where('tel','==',wpp),
         orderBy('criadoEm','desc')
       ));
-      if (snap.empty) {
-        container.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhuma reserva encontrada para este WhatsApp.</p></div>';
+      const docs = snap.docs.filter(d => (d.data().nome || '').toLowerCase().includes(nome));
+      if (!docs.length) {
+        container.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhuma reserva encontrada para este nome.</p></div>';
         return;
       }
-      const rows = snap.docs.map(d => {
+      const rows = docs.map(d => {
         const r = { id: d.id, ...d.data() };
         const dt = r.dataRetirada ? new Date(r.dataRetirada+'T12:00').toLocaleDateString('pt-BR') : '—';
         return `<tr>
