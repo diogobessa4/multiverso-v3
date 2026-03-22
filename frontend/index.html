@@ -184,7 +184,7 @@
 <nav>
   <a class="logo" href="#">MULTI<span>VERSO</span></a>
   <ul>
-    <li><a href="#lancamentos">Novidades</a></li>
+    <li><a href="#lancamentos" onclick="const s=document.getElementById('lancamentos');if(!s||s.style.display==='none'){event.preventDefault();document.getElementById('produtos').scrollIntoView({behavior:'smooth'});}">Novidades</a></li>
     <li><a href="#produtos">Produtos</a></li>
     <li><a href="#reservas">Minhas Reservas</a></li>
     <li><a href="#info">A Loja</a></li>

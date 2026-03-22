@@ -130,9 +130,10 @@
       <button class="btn-google" onclick="enviarOtp()" style="background:var(--neon);color:#000;font-family:'Orbitron',monospace;font-weight:700">ENVIAR CÓDIGO</button>
     </div>
     <div id="loginStep2" style="display:none">
-      <p style="color:var(--muted);font-size:.8rem;margin-bottom:.75rem">Código enviado! Verifique seu email.</p>
+      <p style="color:var(--muted);font-size:.8rem;margin-bottom:.75rem">Código enviado! Verifique seu e-mail (inclusive a pasta de spam).<br><span style="color:var(--neon);font-size:.75rem">Você pode clicar no link do e-mail ou digitar o código de 6 dígitos abaixo.</span></p>
       <input type="text" class="fi" id="loginOtp" placeholder="000000" maxlength="6" style="margin-bottom:.75rem;text-align:center;font-size:1.5rem;letter-spacing:.5rem"/>
-      <button class="btn-google" onclick="verificarOtp()" style="background:var(--neon3);color:#fff;font-family:'Orbitron',monospace;font-weight:700">VERIFICAR</button>
+      <button class="btn-google" onclick="verificarOtp()" style="background:var(--neon3);color:#fff;font-family:'Orbitron',monospace;font-weight:700">VERIFICAR CÓDIGO</button>
+      <button onclick="document.getElementById('loginStep2').style.display='none';document.getElementById('loginStep1').style.display='block';" style="margin-top:.5rem;background:none;border:none;color:var(--muted);font-size:.75rem;cursor:pointer;width:100%">← Usar outro e-mail</button>
     </div>
     <div id="loginErr" class="err"></div>
   </div>
@@ -288,7 +289,7 @@ window.enviarOtp = async function() {
   document.getElementById('loginErr').textContent = '';
   if (!email) { document.getElementById('loginErr').textContent = 'Digite seu e-mail.'; return; }
   try {
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: window.location.href } });
     if (error) throw error;
     _otpEmail = email;
     document.getElementById('loginStep1').style.display = 'none';
