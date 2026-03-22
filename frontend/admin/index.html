@@ -288,7 +288,7 @@ window.enviarOtp = async function() {
   document.getElementById('loginErr').textContent = '';
   if (!email) { document.getElementById('loginErr').textContent = 'Digite seu e-mail.'; return; }
   try {
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
     if (error) throw error;
     _otpEmail = email;
     document.getElementById('loginStep1').style.display = 'none';
