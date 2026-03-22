@@ -125,10 +125,15 @@
       <strong id="emailNegado"></strong><br>
       <button onclick="logout()" style="margin-top:.75rem;background:none;border:1px solid var(--neon2);color:var(--neon2);font-size:.7rem;padding:6px 14px;cursor:pointer;font-family:'Orbitron',monospace">TENTAR OUTRO EMAIL</button>
     </div>
-    <button class="btn-google" onclick="loginGoogle()">
-      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-      Entrar com Google
-    </button>
+    <div id="loginStep1">
+      <input type="email" class="fi" id="loginEmail" placeholder="seu@email.com" style="margin-bottom:.75rem"/>
+      <button class="btn-google" onclick="enviarOtp()" style="background:var(--neon);color:#000;font-family:'Orbitron',monospace;font-weight:700">ENVIAR CÓDIGO</button>
+    </div>
+    <div id="loginStep2" style="display:none">
+      <p style="color:var(--muted);font-size:.8rem;margin-bottom:.75rem">Código enviado! Verifique seu email.</p>
+      <input type="text" class="fi" id="loginOtp" placeholder="000000" maxlength="6" style="margin-bottom:.75rem;text-align:center;font-size:1.5rem;letter-spacing:.5rem"/>
+      <button class="btn-google" onclick="verificarOtp()" style="background:var(--neon3);color:#fff;font-family:'Orbitron',monospace;font-weight:700">VERIFICAR</button>
+    </div>
     <div id="loginErr" class="err"></div>
   </div>
 </div>
@@ -255,43 +260,60 @@
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, getDocs, getDoc, updateDoc, query, where, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const supabase = window.supabase.createClient(
+  'https://uhoqwqydaestneliwozi.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVob3F3cXlkYWVzdG5lbGl3b3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA5MDksImV4cCI6MjA4OTc3NjkwOX0.Fl4wc-d3K1T31sLtE-9genXMCnxMwQg5_uFxnqxhx3U'
+);
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
-  authDomain: "multiverso-banca.firebaseapp.com",
-  projectId: "multiverso-banca",
-  storageBucket: "multiverso-banca.firebasestorage.app",
-  messagingSenderId: "15821286059",
-  appId: "1:15821286059:web:385ffd2162ad55e005e5ee"
-};
-
-const app      = initializeApp(firebaseConfig);
-const db       = getFirestore(app);
-const auth     = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-// E-mails autorizados ficam na colecao "admins" do Firestore — nunca no codigo
 async function isAutorizado(email) {
   if (!email) return false;
   try {
-    const snap = await getDocs(query(
-      collection(db, 'admins'),
-      where('email', '==', email.toLowerCase()),
-      where('ativo', '==', true)
-    ));
-    return !snap.empty;
+    const { data, error } = await supabase
+      .from('admins')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .eq('ativo', true);
+    return !error && data && data.length > 0;
   } catch(e) {
     return false;
   }
 }
 
-onAuthStateChanged(auth, async function(user) {
+var _otpEmail = '';
+
+window.enviarOtp = async function() {
+  var email = document.getElementById('loginEmail').value.trim();
+  document.getElementById('loginErr').textContent = '';
+  if (!email) { document.getElementById('loginErr').textContent = 'Digite seu e-mail.'; return; }
+  try {
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false } });
+    if (error) throw error;
+    _otpEmail = email;
+    document.getElementById('loginStep1').style.display = 'none';
+    document.getElementById('loginStep2').style.display = 'block';
+  } catch(e) {
+    document.getElementById('loginErr').textContent = e.message || 'Erro ao enviar código.';
+  }
+};
+
+window.verificarOtp = async function() {
+  var otp = document.getElementById('loginOtp').value.trim();
+  document.getElementById('loginErr').textContent = '';
+  if (!otp) { document.getElementById('loginErr').textContent = 'Digite o código.'; return; }
+  try {
+    const { error } = await supabase.auth.verifyOtp({ email: _otpEmail, token: otp, type: 'email' });
+    if (error) throw error;
+  } catch(e) {
+    document.getElementById('loginErr').textContent = e.message || 'Código inválido.';
+  }
+};
+
+supabase.auth.onAuthStateChange(async function(event, session) {
   document.getElementById('loadingScreen').classList.add('hide');
-  if (user) {
+  if (session && session.user) {
+    var user = session.user;
     var autorizado = await isAutorizado(user.email);
     if (autorizado) {
       document.getElementById('loginScreen').classList.remove('show');
@@ -312,19 +334,13 @@ onAuthStateChanged(auth, async function(user) {
   }
 });
 
-window.loginGoogle = async function() {
-  document.getElementById('loginErr').textContent = '';
-  try {
-    await signInWithPopup(auth, provider);
-  } catch(e) {
-    if (e.code !== 'auth/popup-closed-by-user') {
-      document.getElementById('loginErr').textContent = 'Erro ao entrar com Google.';
-    }
-  }
-};
-
 window.logout = async function() {
-  await signOut(auth);
+  await supabase.auth.signOut();
+  document.getElementById('loginStep1').style.display = 'block';
+  document.getElementById('loginStep2').style.display = 'none';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginOtp').value = '';
+  _otpEmail = '';
 };
 
 var abaAtual = 'dashboard';
@@ -371,10 +387,10 @@ window.recarregar = function() { window.irPara(abaAtual, null); };
 
 async function carregarDashboard() {
   try {
-    var resSnap  = await getDocs(collection(db, 'reservas'));
-    var prodSnap = await getDocs(query(collection(db, 'produtos'), where('ativo', '==', true)));
-    var reservas = resSnap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
-    var produtos  = prodSnap.docs.map(function(d) { return d.data(); });
+    var resResult  = await supabase.from('reservas').select('*');
+    var prodResult = await supabase.from('produtos').select('*').eq('ativo', true);
+    var reservas = resResult.data || [];
+    var produtos  = prodResult.data || [];
 
     var pending   = reservas.filter(function(r){return r.status==='pending';}).length;
     var confirmed = reservas.filter(function(r){return r.status==='confirmed';}).length;
@@ -389,11 +405,11 @@ async function carregarDashboard() {
       '<div class="stat purple"><div class="stat-icon">📦</div><div class="stat-val">' + produtos.length + '</div><div class="stat-lbl">Produtos</div></div>' +
       '<div class="stat yellow"><div class="stat-icon">⚠️</div><div class="stat-val">' + baixo + '</div><div class="stat-lbl">Estoque Baixo</div></div>';
 
-    var recentes = reservas.sort(function(a,b){ return (b.criadoEm && b.criadoEm.seconds||0) - (a.criadoEm && a.criadoEm.seconds||0); }).slice(0, 6);
+    var recentes = reservas.slice().sort(function(a,b){ return new Date(b.criado_em||0) - new Date(a.criado_em||0); }).slice(0, 6);
     var rows = recentes.map(function(r) {
-      var data = r.criadoEm && r.criadoEm.toDate ? r.criadoEm.toDate().toLocaleDateString('pt-BR') : '--';
+      var data = r.criado_em ? new Date(r.criado_em).toLocaleDateString('pt-BR') : '--';
       return '<tr><td><span style="font-family:\'Orbitron\',monospace;color:var(--gold);font-size:.75rem">' + r.codigo + '</span></td>' +
-             '<td>' + r.produtoEmoji + ' ' + r.produtoNome + '</td>' +
+             '<td>' + (r.produto_emoji||'') + ' ' + (r.produto_nome||'') + '</td>' +
              '<td>' + r.nome + '</td>' +
              '<td>' + statusHtml(r.status) + '</td>' +
              '<td style="font-size:.75rem;color:var(--muted)">' + data + '</td></tr>';
@@ -412,10 +428,10 @@ function renderTabelaReservas(lista) {
   var wrap = document.getElementById('reservasWrap');
   if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhuma reserva encontrada.</div>'; return; }
   var rows = lista.map(function(r) {
-    var data = r.dataRetirada ? new Date(r.dataRetirada + 'T12:00').toLocaleDateString('pt-BR') : '--';
+    var data = r.data_retirada ? new Date(r.data_retirada + 'T12:00').toLocaleDateString('pt-BR') : '--';
     return '<tr>' +
       '<td><span style="font-family:\'Orbitron\',monospace;color:var(--gold);font-size:.75rem">' + r.codigo + '</span></td>' +
-      '<td>' + r.produtoEmoji + ' ' + r.produtoNome + '</td>' +
+      '<td>' + (r.produto_emoji||'') + ' ' + (r.produto_nome||'') + '</td>' +
       '<td>' + r.nome + '</td>' +
       '<td style="font-size:.8rem;color:var(--muted)">' + r.tel + '</td>' +
       '<td style="font-size:.8rem">' + data + '</td>' +
@@ -432,8 +448,9 @@ async function carregarReservas(filtro) {
   var wrap = document.getElementById('reservasWrap');
   wrap.innerHTML = '<div class="loader"><div class="spin"></div></div>';
   try {
-    var snap = await getDocs(query(collection(db, 'reservas'), orderBy('criadoEm', 'desc')));
-    reservasCached = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    var { data, error } = await supabase.from('reservas').select('*').order('criado_em', { ascending: false });
+    if (error) throw error;
+    reservasCached = data || [];
     var lista = reservasCached;
     if (filtro) lista = lista.filter(function(r) { return r.status === filtro; });
     if (termoBuscaAdmin) lista = lista.filter(function(r) { return (r.nome||'').toLowerCase().includes(termoBuscaAdmin); });
@@ -451,12 +468,12 @@ window.filtrarPorCliente = function(termo) {
 
 window.exportarCSV = async function() {
   try {
-    var snap = await getDocs(query(collection(db, 'reservas'), orderBy('criadoEm', 'desc')));
+    var { data, error } = await supabase.from('reservas').select('*').order('criado_em', { ascending: false });
+    if (error) throw error;
     var linhas = [['Codigo','Nome','WhatsApp','Produto','Preco','Qtd','Data Retirada','Status','Criado em']];
-    snap.docs.forEach(function(d) {
-      var r = d.data();
-      var dt = r.criadoEm && r.criadoEm.toDate ? r.criadoEm.toDate().toLocaleDateString('pt-BR') : '';
-      linhas.push([r.codigo||'', r.nome||'', r.tel||'', r.produtoNome||'', r.preco||'', r.quantidade||'', r.dataRetirada||'', r.status||'', dt]);
+    (data || []).forEach(function(r) {
+      var dt = r.criado_em ? new Date(r.criado_em).toLocaleDateString('pt-BR') : '';
+      linhas.push([r.codigo||'', r.nome||'', r.tel||'', r.produto_nome||'', r.preco||'', r.quantidade||'', r.data_retirada||'', r.status||'', dt]);
     });
     var csv = linhas.map(function(l) { return l.map(function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; }).join(','); }).join('\n');
     var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
@@ -484,19 +501,15 @@ window.fecharStatus = function() { document.getElementById('statusOverlay').clas
 window.confirmarStatus = async function() {
   var novoStatus = document.getElementById('sSelect').value;
   try {
-    var resRef  = doc(db, 'reservas', statusReservaId);
-    var resSnap = await getDoc(resRef);
-    var resData = resSnap.data();
-    if (novoStatus === 'cancelled' && resData.status !== 'cancelled') {
-      await runTransaction(db, async function(tx) {
-        var prodRef  = doc(db, 'produtos', resData.produtoId);
-        var prodSnap = await tx.get(prodRef);
-        tx.update(resRef,  { status: novoStatus });
-        tx.update(prodRef, { estoque: (prodSnap.data().estoque || 0) + resData.quantidade });
-      });
+    var err;
+    if (novoStatus === 'cancelled') {
+      var res = await supabase.rpc('cancelar_reserva', { p_reserva_id: statusReservaId });
+      err = res.error;
     } else {
-      await updateDoc(resRef, { status: novoStatus });
+      var res = await supabase.from('reservas').update({ status: novoStatus }).eq('id', statusReservaId);
+      err = res.error;
     }
+    if (err) throw err;
     fecharStatus();
     carregarReservas(filtroStatusAtual);
   } catch(e) { document.getElementById('sErr').textContent = 'Erro ao atualizar.'; }
@@ -506,8 +519,9 @@ async function carregarProdutos() {
   var wrap = document.getElementById('produtosWrap');
   wrap.innerHTML = '<div class="loader"><div class="spin"></div></div>';
   try {
-    var snap = await getDocs(query(collection(db, 'produtos'), where('ativo', '==', true)));
-    var lista = snap.docs.map(function(d) { return Object.assign({id:d.id}, d.data()); });
+    var { data, error } = await supabase.from('produtos').select('*').eq('ativo', true);
+    if (error) throw error;
+    var lista = data || [];
     if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhum produto.</div>'; return; }
     var rows = lista.map(function(p) {
       var editData = JSON.stringify({id:p.id, nome:p.nome, descricao:p.descricao||'', categoria:p.categoria, badge:p.badge||'', preco:p.preco, estoque:p.estoque, foto:p.foto||''}).replace(/"/g, '&quot;');
@@ -582,7 +596,8 @@ window.salvarEdit = async function() {
     emoji:     fotoUrl ? '' : '📦'
   };
   try {
-    await updateDoc(doc(db, 'produtos', id), dados);
+    var { error } = await supabase.from('produtos').update(dados).eq('id', id);
+    if (error) throw error;
     fecharEdit();
     carregarProdutos();
   } catch(e) { document.getElementById('epErr').textContent = 'Erro ao salvar.'; }
@@ -590,7 +605,7 @@ window.salvarEdit = async function() {
 
 window.desativar = async function(id, nome) {
   if (!confirm('Desativar "' + nome + '"?')) return;
-  await updateDoc(doc(db, 'produtos', id), { ativo: false });
+  await supabase.from('produtos').update({ ativo: false }).eq('id', id);
   carregarProdutos();
 };
 
@@ -655,7 +670,7 @@ window.criarProduto = async function() {
     }
   }
   try {
-    await addDoc(collection(db, 'produtos'), {
+    var { error } = await supabase.from('produtos').insert({
       nome:      nome,
       descricao: document.getElementById('npDesc').value,
       categoria: document.getElementById('npCat').value,
@@ -664,9 +679,9 @@ window.criarProduto = async function() {
       estoque:   estoque,
       foto:      fotoData,
       emoji:     fotoData ? '' : '📦',
-      ativo:     true,
-      criadoEm:  serverTimestamp()
+      ativo:     true
     });
+    if (error) throw error;
     document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado!';
     document.getElementById('npNome').value    = '';
     document.getElementById('npDesc').value    = '';

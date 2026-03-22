@@ -309,27 +309,14 @@
   </div>
 </div>
 
-<!-- FIREBASE SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import {
-    getFirestore, collection, doc, addDoc, getDocs, getDoc,
-    updateDoc, query, where, orderBy, serverTimestamp, runTransaction
-  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
+<!-- SUPABASE SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
   // ── CONFIG ──────────────────────────────────────────────────────────────
-  const firebaseConfig = {
-    apiKey: "AIzaSyCO3FVw7ydaqr0_2N9AlB9rYj9UTkXtlGQ",
-    authDomain: "multiverso-banca.firebaseapp.com",
-    projectId: "multiverso-banca",
-    storageBucket: "multiverso-banca.firebasestorage.app",
-    messagingSenderId: "15821286059",
-    appId: "1:15821286059:web:385ffd2162ad55e005e5ee",
-    measurementId: "G-P197Z8H2N1"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const supabase = window.supabase.createClient(
+    'https://uhoqwqydaestneliwozi.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVob3F3cXlkYWVzdG5lbGl3b3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA5MDksImV4cCI6MjA4OTc3NjkwOX0.Fl4wc-d3K1T31sLtE-9genXMCnxMwQg5_uFxnqxhx3U'
+  );
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
   function gerarCodigo() {
@@ -365,8 +352,9 @@
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = '<div class="loader"><div class="spin"></div><div>Carregando...</div></div>';
     try {
-      const snap = await getDocs(query(collection(db,'produtos'), where('ativo','==',true)));
-      todosOsProdutos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const { data, error } = await supabase.from('produtos').select('*').eq('ativo', true);
+      if (error) throw error;
+      todosOsProdutos = data;
       todosOsProdutos.forEach(p => _prodMap[p.id] = p);
       renderLancamentos();
       renderProdutos(cat);
@@ -404,7 +392,7 @@
     const novidades = todosOsProdutos.filter(p => p.badge === 'new');
     const lista = novidades.length
       ? novidades
-      : [...todosOsProdutos].sort((a,b) => (b.criadoEm?.seconds||0) - (a.criadoEm?.seconds||0)).slice(0,4);
+      : [...todosOsProdutos].sort((a,b) => new Date(b.criado_em||0) - new Date(a.criado_em||0)).slice(0,4);
     const sec = document.getElementById('lancamentos');
     if (!lista.length) { sec.style.display = 'none'; return; }
     sec.style.display = 'block';
@@ -485,40 +473,20 @@
     btn.disabled = true; btn.textContent = 'Enviando...';
 
     try {
-      const ativasSnap = await getDocs(query(
-        collection(db,'reservas'),
-        where('tel','==',tel),
-        where('produtoId','==',produtoAtual.id)
-      ));
-      const ativas = ativasSnap.docs.filter(d => ['pending','confirmed'].includes(d.data().status));
-      if (ativas.length > 0) {
-        errEl.textContent = 'Você já tem uma reserva ativa para este produto.';
-        btn.disabled = false; btn.textContent = '⚡ CONFIRMAR RESERVA';
-        return;
-      }
-
-      const prodRef  = doc(db, 'produtos', produtoAtual.id);
-      const codigo   = gerarCodigo();
-
-      await runTransaction(db, async tx => {
-        const prodSnap = await tx.get(prodRef);
-        if (!prodSnap.exists()) throw new Error('Produto não encontrado.');
-        const estoque = prodSnap.data().estoque;
-        if (estoque < qtd)      throw new Error(`Estoque insuficiente. Disponível: ${estoque}`);
-
-        const reservaRef = doc(collection(db, 'reservas'));
-        tx.set(reservaRef, {
-          codigo,
-          produtoId:   produtoAtual.id,
-          produtoNome: produtoAtual.nome,
-          produtoEmoji: produtoAtual.emoji || '📦',
-          preco:       produtoAtual.preco,
-          nome, tel, dataRetirada: data, quantidade: qtd, observacoes: obs,
-          status: 'pending',
-          criadoEm: serverTimestamp()
-        });
-        tx.update(prodRef, { estoque: estoque - qtd });
+      const codigo = gerarCodigo();
+      const { data: reservaId, error } = await supabase.rpc('criar_reserva', {
+        p_codigo:        codigo,
+        p_produto_id:    produtoAtual.id,
+        p_produto_nome:  produtoAtual.nome,
+        p_produto_emoji: produtoAtual.emoji || '📦',
+        p_preco:         produtoAtual.preco,
+        p_nome:          nome,
+        p_tel:           tel,
+        p_data_retirada: data,
+        p_quantidade:    qtd,
+        p_observacoes:   obs
       });
+      if (error) throw new Error(error.message || 'Erro ao criar reserva.');
 
       document.getElementById('successCodigo').textContent = codigo;
       const wppMsg = encodeURIComponent(`Olá! Acabei de fazer uma reserva na Multiverso.\n\n📦 Produto: ${produtoAtual.nome}\n🔑 Código: ${codigo}\n📅 Retirada: ${new Date(data+'T12:00').toLocaleDateString('pt-BR')}\n👤 Nome: ${nome}`);
@@ -536,29 +504,29 @@
 
   // ── BUSCAR RESERVAS (cliente) ────────────────────────────────────────────
   window.buscarReservas = async function() {
-    const nome = document.getElementById('searchNome').value.trim().toLowerCase();
+    const nome = document.getElementById('searchNome').value.trim();
     if (!nome) { alert('Digite seu nome.'); return; }
     const container = document.getElementById('reservasContainer');
     container.innerHTML = '<div class="loader"><div class="spin"></div><div>Buscando...</div></div>';
     try {
-      const snap = await getDocs(query(
-        collection(db,'reservas'),
-        orderBy('criadoEm','desc')
-      ));
-      const docs = snap.docs.filter(d => (d.data().nome || '').toLowerCase().includes(nome));
-      if (!docs.length) {
+      const { data, error } = await supabase
+        .from('reservas')
+        .select('*')
+        .ilike('nome', `%${nome}%`)
+        .order('criado_em', { ascending: false });
+      if (error) throw error;
+      if (!data.length) {
         container.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhuma reserva encontrada para este nome.</p></div>';
         return;
       }
-      const rows = docs.map(d => {
-        const r = { id: d.id, ...d.data() };
-        const dt = r.dataRetirada ? new Date(r.dataRetirada+'T12:00').toLocaleDateString('pt-BR') : '—';
+      const rows = data.map(r => {
+        const dt = r.data_retirada ? new Date(r.data_retirada+'T12:00').toLocaleDateString('pt-BR') : '—';
         return `<tr>
-          <td>${r.produtoEmoji} <strong>${r.produtoNome}</strong></td>
+          <td>${r.produto_emoji} <strong>${r.produto_nome}</strong></td>
           <td>${r.quantidade}x</td>
           <td style="font-size:.8rem">${dt}</td>
           <td>${statusHtml(r.status)}</td>
-          <td>${r.status==='pending'?`<button class="btn-cancel" onclick="cancelarReserva('${r.id}','${r.produtoId}',${r.quantidade})">CANCELAR</button>`:'—'}</td>
+          <td>${r.status==='pending'?`<button class="btn-cancel" onclick="cancelarReserva('${r.id}','${r.produto_id}',${r.quantidade})">CANCELAR</button>`:'—'}</td>
         </tr>`;
       }).join('');
       container.innerHTML = `<div style="overflow-x:auto"><table class="reservas-table">
@@ -572,13 +540,8 @@
   window.cancelarReserva = async function(reservaId, produtoId, qtd) {
     if (!confirm('Deseja cancelar esta reserva?')) return;
     try {
-      await runTransaction(db, async tx => {
-        const resRef  = doc(db, 'reservas', reservaId);
-        const prodRef = doc(db, 'produtos', produtoId);
-        const prodSnap = await tx.get(prodRef);
-        tx.update(resRef,  { status: 'cancelled' });
-        tx.update(prodRef, { estoque: (prodSnap.data().estoque || 0) + qtd });
-      });
+      const { error } = await supabase.rpc('cancelar_reserva', { p_reserva_id: reservaId });
+      if (error) throw error;
       buscarReservas();
     } catch(e) { alert('Erro ao cancelar. Tente novamente.'); }
   };
