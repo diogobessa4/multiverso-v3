@@ -496,7 +496,6 @@
         const r = { id: d.id, ...d.data() };
         const dt = r.dataRetirada ? new Date(r.dataRetirada+'T12:00').toLocaleDateString('pt-BR') : '—';
         return `<tr>
-          <td><span style="font-family:'Orbitron',monospace;color:var(--gold);font-size:.75rem">${r.codigo}</span></td>
           <td>${r.produtoEmoji} <strong>${r.produtoNome}</strong></td>
           <td>${r.quantidade}x</td>
           <td style="font-size:.8rem">${dt}</td>
@@ -505,7 +504,7 @@
         </tr>`;
       }).join('');
       container.innerHTML = `<div style="overflow-x:auto"><table class="reservas-table">
-        <thead><tr><th>Código</th><th>Produto</th><th>Qtd.</th><th>Retirada</th><th>Status</th><th>Ação</th></tr></thead>
+        <thead><tr><th>Produto</th><th>Qtd.</th><th>Retirada</th><th>Status</th><th>Ação</th></tr></thead>
         <tbody>${rows}</tbody></table></div>`;
     } catch(e) {
       container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao buscar. Tente novamente.</p></div>';
