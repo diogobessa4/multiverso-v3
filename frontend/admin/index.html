@@ -261,12 +261,21 @@
   </div>
 </div>
 
-<script src="/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 <script>
-const supabase = window.supabase.createClient(
-  'https://uhoqwqydaestneliwozi.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVob3F3cXlkYWVzdG5lbGl3b3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA5MDksImV4cCI6MjA4OTc3NjkwOX0.Fl4wc-d3K1T31sLtE-9genXMCnxMwQg5_uFxnqxhx3U'
-);
+// DIAGNÓSTICO — visível no console do navegador
+console.log('[Multiverso] SDK carregado?', typeof window.supabase !== 'undefined');
+var supabase;
+try {
+  supabase = window.supabase.createClient(
+    'https://uhoqwqydaestneliwozi.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVob3F3cXlkYWVzdG5lbGl3b3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA5MDksImV4cCI6MjA4OTc3NjkwOX0.Fl4wc-d3K1T31sLtE-9genXMCnxMwQg5_uFxnqxhx3U'
+  );
+  console.log('[Multiverso] createClient OK');
+} catch(err) {
+  console.error('[Multiverso] ERRO createClient:', err);
+  document.getElementById('loadingScreen').innerHTML = '<div style="color:#ff3e6c;padding:2rem;text-align:center;font-family:monospace">ERRO ao inicializar SDK.<br>Abra o console do navegador (F12).<br><small>' + err.message + '</small></div>';
+}
 
 async function isAutorizado(email) {
   if (!email) return false;
