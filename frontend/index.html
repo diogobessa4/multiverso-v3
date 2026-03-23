@@ -523,10 +523,7 @@
     container.innerHTML = '<div class="loader"><div class="spin"></div><div>Buscando...</div></div>';
     try {
       const { data, error } = await supabase
-        .from('reservas')
-        .select('*')
-        .ilike('nome', `%${nome}%`)
-        .order('criado_em', { ascending: false });
+        .rpc('buscar_reservas', { p_nome: nome });
       if (error) throw error;
       if (!data.length) {
         container.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhuma reserva encontrada para este nome.</p></div>';
