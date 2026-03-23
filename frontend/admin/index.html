@@ -257,6 +257,7 @@
   </div>
 </div>
 
+<script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
 <script>
 // DIAGNÓSTICO — visível no console do navegador
@@ -264,8 +265,8 @@ console.log('[Multiverso] SDK carregado?', typeof window.supabase !== 'undefined
 var supabase;
 try {
   supabase = window.supabase.createClient(
-    'https://uhoqwqydaestneliwozi.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVob3F3cXlkYWVzdG5lbGl3b3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA5MDksImV4cCI6MjA4OTc3NjkwOX0.Fl4wc-d3K1T31sLtE-9genXMCnxMwQg5_uFxnqxhx3U'
+    window.__env.supabaseUrl,
+    window.__env.supabaseKey
   );
   console.log('[Multiverso] createClient OK');
 } catch(err) {

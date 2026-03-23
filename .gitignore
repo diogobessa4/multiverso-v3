@@ -1,6 +1,9 @@
 # Variáveis de ambiente — NUNCA commitar
 .env
 
+# Gerado automaticamente pelo build — contém credenciais
+frontend/config.js
+
 # Banco de dados SQLite
 *.db
 *.db-shm
