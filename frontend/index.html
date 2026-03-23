@@ -310,8 +310,9 @@
 </div>
 
 <!-- SUPABASE SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/supabase.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'"></script>
 <script>
+  if (!window.supabase) { document.getElementById('productsGrid').innerHTML='<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar. Recarregue a página.</p></div>'; throw new Error('Supabase SDK not loaded'); }
   // ── CONFIG ──────────────────────────────────────────────────────────────
   const supabase = window.supabase.createClient(
     'https://uhoqwqydaestneliwozi.supabase.co',
