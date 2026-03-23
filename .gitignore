@@ -1,0 +1,14 @@
+# Variáveis de ambiente — NUNCA commitar
+.env
+
+# Banco de dados SQLite
+*.db
+*.db-shm
+*.db-wal
+
+# Dependências
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*

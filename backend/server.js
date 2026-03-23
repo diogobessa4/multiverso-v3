@@ -1,10 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const rateLimit = require('express-rate-limit');
 const { v4: uuidv4 } = require('uuid');
 const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+// Sessões ativas em memória: token -> timestamp de expiração
+const activeSessions = new Map();
+const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 horas
 
 app.use(cors());
 app.use(express.json());
@@ -174,15 +182,37 @@ app.delete('/api/reservas/:codigo', (req, res) => {
 
 // ─── ADMIN ───────────────────────────────────────────────────────────────────
 
+// Rate limiter: máx 10 tentativas de login a cada 15 minutos
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Muitas tentativas de login. Tente novamente em 15 minutos.' }
+});
+
 // POST /api/admin/login
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', loginLimiter, async (req, res) => {
   const { senha } = req.body;
+  if (!senha) return res.status(400).json({ success: false, message: 'Informe a senha.' });
+
   const config = db.prepare("SELECT valor FROM admin_config WHERE chave = 'admin_password'").get();
-  if (senha === config.valor) {
-    res.json({ success: true, token: 'admin-' + Buffer.from(senha).toString('base64') });
-  } else {
-    res.status(401).json({ success: false, message: 'Senha incorreta.' });
+  const match = await bcrypt.compare(senha, config.valor);
+
+  if (!match) {
+    return res.status(401).json({ success: false, message: 'Senha incorreta.' });
   }
+
+  const token = crypto.randomBytes(32).toString('hex');
+  activeSessions.set(token, Date.now() + SESSION_TTL);
+  res.json({ success: true, token });
+});
+
+// POST /api/admin/logout
+app.post('/api/admin/logout', adminAuth, (req, res) => {
+  const token = req.headers.authorization.replace('Bearer ', '');
+  activeSessions.delete(token);
+  res.json({ success: true, message: 'Sessão encerrada.' });
 });
 
 // GET /api/admin/reservas — todas as reservas
@@ -250,10 +280,10 @@ function adminAuth(req, res, next) {
     return res.status(401).json({ success: false, message: 'Não autorizado.' });
   }
   const token = auth.replace('Bearer ', '');
-  const config = db.prepare("SELECT valor FROM admin_config WHERE chave = 'admin_password'").get();
-  const expectedToken = 'admin-' + Buffer.from(config.valor).toString('base64');
-  if (token !== expectedToken) {
-    return res.status(401).json({ success: false, message: 'Token inválido.' });
+  const expiry = activeSessions.get(token);
+  if (!expiry || Date.now() > expiry) {
+    activeSessions.delete(token);
+    return res.status(401).json({ success: false, message: 'Token inválido ou expirado. Faça login novamente.' });
   }
   next();
 }
@@ -262,6 +292,5 @@ function adminAuth(req, res, next) {
 
 app.listen(PORT, () => {
   console.log(`\n🌌 Multiverso Backend rodando em http://localhost:${PORT}`);
-  console.log(`📦 API disponível em http://localhost:${PORT}/api`);
-  console.log(`🔑 Acesse o admin com a senha: multiverso2025\n`);
+  console.log(`📦 API disponível em http://localhost:${PORT}/api\n`);
 });

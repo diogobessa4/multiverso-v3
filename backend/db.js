@@ -1,4 +1,6 @@
+require('dotenv').config();
 const Database = require('better-sqlite3');
+const bcrypt = require('bcrypt');
 const path = require('path');
 
 const DB_PATH = path.join(__dirname, 'multiverso.db');
@@ -70,11 +72,26 @@ if (count.n === 0) {
   console.log('✅ Banco de dados populado com produtos iniciais.');
 }
 
-// Admin config seed
-const adminPass = db.prepare("SELECT valor FROM admin_config WHERE chave='admin_password'").get();
-if (!adminPass) {
-  db.prepare("INSERT INTO admin_config (chave, valor) VALUES ('admin_password', 'multiverso2025')").run();
-  console.log('✅ Senha admin padrão: multiverso2025');
+// ─── ADMIN CONFIG ─────────────────────────────────────────────────────────────
+
+const adminConfig = db.prepare("SELECT valor FROM admin_config WHERE chave = 'admin_password'").get();
+
+if (!adminConfig) {
+  // Primeiro setup: exige ADMIN_PASSWORD no .env
+  const senha = process.env.ADMIN_PASSWORD;
+  if (!senha) {
+    console.error('❌ ADMIN_PASSWORD não definido no arquivo .env! Crie o arquivo .env com base no .env.example antes de iniciar.');
+    process.exit(1);
+  }
+  const hash = bcrypt.hashSync(senha, 12);
+  db.prepare("INSERT INTO admin_config (chave, valor) VALUES ('admin_password', ?)").run(hash);
+  console.log('✅ Senha admin configurada com hash bcrypt.');
+} else if (!adminConfig.valor.startsWith('$2b$')) {
+  // Migração: senha antiga em texto puro → bcrypt
+  console.warn('⚠️  Migrando senha admin de texto puro para bcrypt...');
+  const hash = bcrypt.hashSync(adminConfig.valor, 12);
+  db.prepare("UPDATE admin_config SET valor = ? WHERE chave = 'admin_password'").run(hash);
+  console.log('✅ Senha migrada para bcrypt com sucesso.');
 }
 
 module.exports = db;
