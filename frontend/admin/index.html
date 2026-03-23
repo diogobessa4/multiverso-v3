@@ -261,9 +261,8 @@
   </div>
 </div>
 
-<script src="/supabase.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'"></script>
+<script src="/supabase.min.js"></script>
 <script>
-if (!window.supabase) { document.getElementById('loadingScreen').innerHTML='<div style="color:#ff3e6c;font-family:monospace;padding:2rem;text-align:center">⚠️ Erro ao carregar o SDK.<br>Recarregue a página.</div>'; throw new Error('Supabase SDK not loaded'); }
 const supabase = window.supabase.createClient(
   'https://uhoqwqydaestneliwozi.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVob3F3cXlkYWVzdG5lbGl3b3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA5MDksImV4cCI6MjA4OTc3NjkwOX0.Fl4wc-d3K1T31sLtE-9genXMCnxMwQg5_uFxnqxhx3U'
@@ -312,7 +311,13 @@ window.verificarOtp = async function() {
   }
 };
 
+var _authInitTimeout = setTimeout(function() {
+  document.getElementById('loadingScreen').classList.add('hide');
+  document.getElementById('loginScreen').classList.add('show');
+}, 5000);
+
 supabase.auth.onAuthStateChange(async function(event, session) {
+  clearTimeout(_authInitTimeout);
   document.getElementById('loadingScreen').classList.add('hide');
   if (session && session.user) {
     var user = session.user;

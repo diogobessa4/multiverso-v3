@@ -310,9 +310,8 @@
 </div>
 
 <!-- SUPABASE SDK -->
-<script src="/supabase.min.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js'"></script>
+<script src="/supabase.min.js"></script>
 <script>
-  if (!window.supabase) { document.getElementById('productsGrid').innerHTML='<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar. Recarregue a página.</p></div>'; throw new Error('Supabase SDK not loaded'); }
   // ── CONFIG ──────────────────────────────────────────────────────────────
   const supabase = window.supabase.createClient(
     'https://uhoqwqydaestneliwozi.supabase.co',
@@ -352,14 +351,19 @@
   async function carregarProdutos(cat='todos') {
     const grid = document.getElementById('productsGrid');
     grid.innerHTML = '<div class="loader"><div class="spin"></div><div>Carregando...</div></div>';
+    const t = setTimeout(() => {
+      if (grid.querySelector('.spin')) grid.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Não foi possível conectar ao servidor.<br><a href="#" onclick="carregarProdutos();return false" style="color:var(--neon)">Tentar novamente</a></p></div>';
+    }, 8000);
     try {
       const { data, error } = await supabase.from('produtos').select('*').eq('ativo', true);
+      clearTimeout(t);
       if (error) throw error;
       todosOsProdutos = data;
       todosOsProdutos.forEach(p => _prodMap[p.id] = p);
       renderLancamentos();
       renderProdutos(cat);
     } catch(e) {
+      clearTimeout(t);
       grid.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Erro ao carregar produtos. Verifique sua conexão.</p></div>';
     }
   }
