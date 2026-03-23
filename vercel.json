@@ -1,4 +1,3 @@
 {
-  "buildCommand": "node build.js",
-  "outputDirectory": "frontend"
+  "buildCommand": "node build.js"
 }

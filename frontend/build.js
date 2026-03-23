@@ -10,5 +10,5 @@ if (!url || !key) {
 }
 
 const config = `window.__env = {\n  supabaseUrl: "${url}",\n  supabaseKey: "${key}"\n};\n`;
-fs.writeFileSync(path.join(__dirname, 'frontend', 'config.js'), config);
-console.log('✅ frontend/config.js gerado com sucesso.');
+fs.writeFileSync(path.join(__dirname, 'config.js'), config);
+console.log('✅ config.js gerado com sucesso.');
