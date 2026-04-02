@@ -481,7 +481,8 @@
     errEl.textContent = '';
 
     if (!nome || !tel || !data) { errEl.textContent = 'Preencha nome, WhatsApp e data de retirada.'; return; }
-    if (tel.length < 10)        { errEl.textContent = 'WhatsApp inválido.'; return; }
+    if (nome.length < 3)        { errEl.textContent = 'Nome deve ter ao menos 3 caracteres.'; return; }
+    if (tel.length < 10 || tel.length > 11) { errEl.textContent = 'WhatsApp inválido. Use DDD + número (10 ou 11 dígitos).'; return; }
 
     const btn = document.getElementById('btnSubmit');
     btn.disabled = true; btn.textContent = 'Enviando...';
@@ -519,14 +520,16 @@
   // ── BUSCAR RESERVAS (cliente) ────────────────────────────────────────────
   window.buscarReservas = async function() {
     const nome = document.getElementById('searchNome').value.trim();
-    if (!nome) { alert('Digite seu nome.'); return; }
     const container = document.getElementById('reservasContainer');
+    if (!nome || nome.length < 2) {
+      container.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Digite ao menos 2 caracteres do seu nome.</p></div>';
+      return;
+    }
     container.innerHTML = '<div class="loader"><div class="spin"></div><div>Buscando...</div></div>';
     try {
-      const { data, error } = await supabase
-        .rpc('buscar_reservas', { p_nome: nome });
+      const { data, error } = await supabase.rpc('buscar_reservas', { p_nome: nome });
       if (error) throw error;
-      if (!data.length) {
+      if (!data || !data.length) {
         container.innerHTML = '<div class="empty-state"><div class="ei">📭</div><p>Nenhuma reserva encontrada para este nome.</p></div>';
         return;
       }

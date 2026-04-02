@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const { v4: uuidv4 } = require('uuid');
@@ -10,13 +10,26 @@ const db = require('./db');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Sessões ativas em memória: token -> timestamp de expiração
+// Sessões ativas: token -> { expires: Date }
 const activeSessions = new Map();
-const SESSION_TTL = 8 * 60 * 60 * 1000; // 8 horas
 
-app.use(cors());
-app.use(express.json());
+// ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static('../frontend'));
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Muitas tentativas. Tente novamente em 15 minutos.' }
+});
 
 // ─── UTILS ───────────────────────────────────────────────────────────────────
 
@@ -108,6 +121,15 @@ app.post('/api/reservas', (req, res) => {
     return res.status(400).json({ success: false, message: 'Preencha: produto_id, nome, whatsapp e data_retirada.' });
   }
 
+  const wpp = formatWhatsApp(whatsapp);
+  if (wpp.length < 10 || wpp.length > 11) {
+    return res.status(400).json({ success: false, message: 'WhatsApp inválido. Use DDD + número (10 ou 11 dígitos).' });
+  }
+
+  if (nome.trim().length < 3) {
+    return res.status(400).json({ success: false, message: 'Nome deve ter ao menos 3 caracteres.' });
+  }
+
   const produto = db.prepare('SELECT * FROM produtos WHERE id = ? AND ativo = 1').get(produto_id);
   if (!produto) return res.status(404).json({ success: false, message: 'Produto não encontrado.' });
 
@@ -123,7 +145,7 @@ app.post('/api/reservas', (req, res) => {
     db.prepare(`
       INSERT INTO reservas (codigo, produto_id, nome, whatsapp, data_retirada, quantidade, observacoes)
       VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(codigo, produto_id, nome.trim(), formatWhatsApp(whatsapp), data_retirada, qtd, observacoes || '');
+    `).run(codigo, produto_id, nome.trim(), wpp, data_retirada, qtd, observacoes || '');
 
     db.prepare('UPDATE produtos SET estoque = estoque - ? WHERE id = ?').run(qtd, produto_id);
   });
@@ -182,37 +204,32 @@ app.delete('/api/reservas/:codigo', (req, res) => {
 
 // ─── ADMIN ───────────────────────────────────────────────────────────────────
 
-// Rate limiter: máx 10 tentativas de login a cada 15 minutos
-const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Muitas tentativas de login. Tente novamente em 15 minutos.' }
-});
-
 // POST /api/admin/login
 app.post('/api/admin/login', loginLimiter, async (req, res) => {
   const { senha } = req.body;
-  if (!senha) return res.status(400).json({ success: false, message: 'Informe a senha.' });
+  if (!senha) return res.status(400).json({ success: false, message: 'Senha obrigatória.' });
 
   const config = db.prepare("SELECT valor FROM admin_config WHERE chave = 'admin_password'").get();
-  const match = await bcrypt.compare(senha, config.valor);
+  if (!config) return res.status(500).json({ success: false, message: 'Configuração não encontrada.' });
 
-  if (!match) {
-    return res.status(401).json({ success: false, message: 'Senha incorreta.' });
-  }
+  const match = await bcrypt.compare(senha, config.valor);
+  if (!match) return res.status(401).json({ success: false, message: 'Senha incorreta.' });
 
   const token = crypto.randomBytes(32).toString('hex');
-  activeSessions.set(token, Date.now() + SESSION_TTL);
+  const expires = new Date(Date.now() + 8 * 60 * 60 * 1000); // 8 horas
+  activeSessions.set(token, { expires });
+
   res.json({ success: true, token });
 });
 
 // POST /api/admin/logout
-app.post('/api/admin/logout', adminAuth, (req, res) => {
-  const token = req.headers.authorization.replace('Bearer ', '');
-  activeSessions.delete(token);
-  res.json({ success: true, message: 'Sessão encerrada.' });
+app.post('/api/admin/logout', (req, res) => {
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith('Bearer ')) {
+    const token = auth.replace('Bearer ', '');
+    activeSessions.delete(token);
+  }
+  res.json({ success: true, message: 'Logout efetuado.' });
 });
 
 // GET /api/admin/reservas — todas as reservas
@@ -280,10 +297,10 @@ function adminAuth(req, res, next) {
     return res.status(401).json({ success: false, message: 'Não autorizado.' });
   }
   const token = auth.replace('Bearer ', '');
-  const expiry = activeSessions.get(token);
-  if (!expiry || Date.now() > expiry) {
+  const session = activeSessions.get(token);
+  if (!session || session.expires < new Date()) {
     activeSessions.delete(token);
-    return res.status(401).json({ success: false, message: 'Token inválido ou expirado. Faça login novamente.' });
+    return res.status(401).json({ success: false, message: 'Sessão expirada ou inválida.' });
   }
   next();
 }
