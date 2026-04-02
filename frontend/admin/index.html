@@ -319,10 +319,10 @@ var _authInitTimeout = setTimeout(function() {
 
 supabase.auth.onAuthStateChange(async function(event, session) {
   clearTimeout(_authInitTimeout);
-  document.getElementById('loadingScreen').classList.add('hide');
   if (session && session.user) {
     var user = session.user;
     var autorizado = await isAutorizado(user.email);
+    document.getElementById('loadingScreen').classList.add('hide');
     if (autorizado) {
       document.getElementById('loginScreen').classList.remove('show');
       document.getElementById('adminLayout').classList.add('show');
@@ -336,6 +336,7 @@ supabase.auth.onAuthStateChange(async function(event, session) {
       document.getElementById('emailNegado').textContent = user.email;
     }
   } else {
+    document.getElementById('loadingScreen').classList.add('hide');
     document.getElementById('loginScreen').classList.add('show');
     document.getElementById('adminLayout').classList.remove('show');
     document.getElementById('acessoNegado').classList.remove('show');
