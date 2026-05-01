@@ -1,5 +1,6 @@
 # Variáveis de ambiente — NUNCA commitar
 .env
+.env.local
 
 # Gerado automaticamente pelo build — contém credenciais
 frontend/config.js
