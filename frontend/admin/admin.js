@@ -52,6 +52,8 @@ var _authInitTimeout = setTimeout(function() {
   document.getElementById('loginScreen').classList.add('show');
 }, 5000);
 
+var _jaAutorizadoUmaVez = false;
+
 supabase.auth.onAuthStateChange(async function(event, session) {
   console.log('[Multiverso] auth event:', event, 'tem sessão:', !!session);
   try {
@@ -61,7 +63,7 @@ supabase.auth.onAuthStateChange(async function(event, session) {
       var autorizado = await Promise.race([
         isAutorizado(user.email),
         new Promise(function(_, reject) {
-          setTimeout(function() { reject(new Error('timeout_isAutorizado')); }, 8000);
+          setTimeout(function() { reject(new Error('timeout_isAutorizado')); }, 12000);
         })
       ]);
 
@@ -70,6 +72,7 @@ supabase.auth.onAuthStateChange(async function(event, session) {
       document.getElementById('loadingScreen').classList.add('hide');
 
       if (autorizado) {
+        _jaAutorizadoUmaVez = true;
         document.getElementById('loginScreen').classList.remove('show');
         document.getElementById('adminLayout').classList.add('show');
         document.getElementById('userEmail').textContent = user.email;
@@ -91,6 +94,12 @@ supabase.auth.onAuthStateChange(async function(event, session) {
   } catch (err) {
     console.error('[Multiverso] Erro auth flow:', err);
     clearTimeout(_authInitTimeout);
+
+    if (_jaAutorizadoUmaVez) {
+      console.warn('[Multiverso] Timeout em re-dispatch, ignorando.');
+      return;
+    }
+
     document.getElementById('loadingScreen').classList.add('hide');
     document.getElementById('loginScreen').classList.add('show');
     document.getElementById('adminLayout').classList.remove('show');
