@@ -43,8 +43,8 @@ body{background:var(--bg);color:var(--text);font-family:'Exo 2',sans-serif;min-h
 .stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
 .stat.blue::after{background:var(--neon);}.stat.green::after{background:var(--success);}.stat.yellow::after{background:var(--gold);}.stat.red::after{background:var(--neon2);}.stat.purple::after{background:var(--neon3);}
 .stat-icon{font-size:1.5rem;margin-bottom:.75rem;}
-.stat-val{font-family:'Orbitron',monospace;font-size:2rem;font-weight:900;color:#fff;}
-.stat-lbl{font-size:.72rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:.25rem;}
+.stat-val{font-family:'Orbitron',monospace;font-size:2.25rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:.25rem;letter-spacing:-.02em;}
+.stat-lbl{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-family:'Orbitron',monospace;font-weight:700;}
 .card{background:var(--card);border:1px solid var(--border);overflow:hidden;margin-bottom:1.5rem;}
 .card-hd{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
 .card-title{font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;color:#fff;}
