@@ -9,6 +9,21 @@ const db = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const IS_PROD = process.env.NODE_ENV === 'production';
+
+// Backend é desenvolvimento local. Produção fala direto com Supabase.
+// Se alguém tentar rodar em prod, abortar — sessões em memória + SQLite local
+// não suportam o cenário de produção.
+if (IS_PROD) {
+  console.error('❌ Este backend é apenas para desenvolvimento local. Em produção o frontend conecta direto ao Supabase.');
+  process.exit(1);
+}
+
+// CORS fail-closed: exige CORS_ORIGIN explícito (sem fallback para "*").
+if (!process.env.CORS_ORIGIN) {
+  console.error('❌ Defina CORS_ORIGIN no .env (ex.: http://localhost:5500).');
+  process.exit(1);
+}
 
 // Sessões ativas: token -> { expires: Date }
 const activeSessions = new Map();
@@ -16,7 +31,7 @@ const activeSessions = new Map();
 // ─── MIDDLEWARE ───────────────────────────────────────────────────────────────
 
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: process.env.CORS_ORIGIN.split(',').map(s => s.trim()),
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
