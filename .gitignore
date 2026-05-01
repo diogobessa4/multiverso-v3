@@ -1,5 +1,6 @@
 # Variáveis de ambiente — NUNCA commitar
 .env
+.env.local
 
 # Gerado automaticamente pelo build — contém credenciais
 frontend/config.js
@@ -15,3 +16,8 @@ node_modules/
 # Logs
 *.log
 npm-debug.log*
+
+# Imagens locais usadas como fila de cadastro
+imagens/*
+!imagens/.gitkeep
+!imagens/README.md
