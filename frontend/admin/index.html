@@ -318,28 +318,52 @@ var _authInitTimeout = setTimeout(function() {
 }, 5000);
 
 supabase.auth.onAuthStateChange(async function(event, session) {
-  clearTimeout(_authInitTimeout);
-  if (session && session.user) {
-    var user = session.user;
-    var autorizado = await isAutorizado(user.email);
-    document.getElementById('loadingScreen').classList.add('hide');
-    if (autorizado) {
-      document.getElementById('loginScreen').classList.remove('show');
-      document.getElementById('adminLayout').classList.add('show');
-      document.getElementById('userEmail').textContent = user.email;
-      document.getElementById('acessoNegado').classList.remove('show');
-      carregarDashboard();
+  console.log('[Multiverso] auth event:', event, 'tem sessão:', !!session);
+  try {
+    if (session && session.user) {
+      var user = session.user;
+
+      var autorizado = await Promise.race([
+        isAutorizado(user.email),
+        new Promise(function(_, reject) {
+          setTimeout(function() { reject(new Error('timeout_isAutorizado')); }, 8000);
+        })
+      ]);
+
+      console.log('[Multiverso] autorizado:', autorizado);
+      clearTimeout(_authInitTimeout);
+      document.getElementById('loadingScreen').classList.add('hide');
+
+      if (autorizado) {
+        document.getElementById('loginScreen').classList.remove('show');
+        document.getElementById('adminLayout').classList.add('show');
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('acessoNegado').classList.remove('show');
+        carregarDashboard();
+      } else {
+        document.getElementById('loginScreen').classList.add('show');
+        document.getElementById('adminLayout').classList.remove('show');
+        document.getElementById('acessoNegado').classList.add('show');
+        document.getElementById('emailNegado').textContent = user.email;
+      }
     } else {
+      clearTimeout(_authInitTimeout);
+      document.getElementById('loadingScreen').classList.add('hide');
       document.getElementById('loginScreen').classList.add('show');
       document.getElementById('adminLayout').classList.remove('show');
-      document.getElementById('acessoNegado').classList.add('show');
-      document.getElementById('emailNegado').textContent = user.email;
+      document.getElementById('acessoNegado').classList.remove('show');
     }
-  } else {
+  } catch (err) {
+    console.error('[Multiverso] Erro auth flow:', err);
+    clearTimeout(_authInitTimeout);
     document.getElementById('loadingScreen').classList.add('hide');
     document.getElementById('loginScreen').classList.add('show');
     document.getElementById('adminLayout').classList.remove('show');
     document.getElementById('acessoNegado').classList.remove('show');
+
+    if (err && err.message === 'timeout_isAutorizado') {
+      try { await supabase.auth.signOut(); } catch(e) {}
+    }
   }
 });
 
