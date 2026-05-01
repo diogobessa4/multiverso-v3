@@ -297,7 +297,7 @@ async function carregarProdutos() {
     var lista = data || [];
     if (!lista.length) { wrap.innerHTML = '<div class="empty">Nenhum produto.</div>'; return; }
     var rows = lista.map(function(p) {
-      var editData = JSON.stringify({id:p.id, nome:p.nome, descricao:p.descricao||'', categoria:p.categoria, badge:p.badge||'', preco:p.preco, estoque:p.estoque, foto:p.foto||''}).replace(/"/g, '&quot;');
+      var editData = JSON.stringify({id:p.id, nome:p.nome, descricao:p.descricao||'', categoria:p.categoria, badge:p.badge||'', preco:p.preco, estoque:p.estoque, foto:p.foto||'', numero_serie:p.numero_serie||''}).replace(/"/g, '&quot;');
       var imgHtml = p.foto
         ? '<img src="' + escHtml(p.foto) + '" style="width:38px;height:38px;object-fit:cover;vertical-align:middle;margin-right:.5rem;border:1px solid var(--border)">'
         : '<span style="font-size:1.3rem;vertical-align:middle;margin-right:.4rem">' + escHtml(p.emoji || '📦') + '</span>';
@@ -318,15 +318,16 @@ async function carregarProdutos() {
 
 window.abrirEdit = function(p) {
   var prod = typeof p === 'string' ? JSON.parse(p) : p;
-  document.getElementById('epId').value        = prod.id;
-  document.getElementById('epNome').value      = prod.nome;
-  document.getElementById('epDesc').value      = prod.descricao || '';
-  document.getElementById('epCat').value       = prod.categoria;
-  document.getElementById('epBadge').value     = prod.badge || '';
-  document.getElementById('epPreco').value     = prod.preco;
-  document.getElementById('epEstoque').value   = prod.estoque;
-  document.getElementById('epFotoAtual').value = prod.foto || '';
-  document.getElementById('epFoto').value      = '';
+  document.getElementById('epId').value           = prod.id;
+  document.getElementById('epNome').value         = prod.nome;
+  document.getElementById('epDesc').value         = prod.descricao || '';
+  document.getElementById('epCat').value          = prod.categoria;
+  document.getElementById('epBadge').value        = prod.badge || '';
+  document.getElementById('epPreco').value        = prod.preco;
+  document.getElementById('epEstoque').value      = prod.estoque;
+  document.getElementById('epNumeroSerie').value  = prod.numero_serie || '';
+  document.getElementById('epFotoAtual').value    = prod.foto || '';
+  document.getElementById('epFoto').value         = '';
   var preview     = document.getElementById('epFotoPreview');
   var placeholder = document.getElementById('epFotoPlaceholder');
   if (prod.foto) {
@@ -362,15 +363,17 @@ window.salvarEdit = async function() {
       return;
     }
   }
+  var numeroSerieEdit = document.getElementById('epNumeroSerie').value.trim();
   var dados = {
-    nome:      document.getElementById('epNome').value,
-    descricao: document.getElementById('epDesc').value,
-    categoria: document.getElementById('epCat').value,
-    badge:     document.getElementById('epBadge').value || null,
-    preco:     parseFloat(document.getElementById('epPreco').value),
-    estoque:   parseInt(document.getElementById('epEstoque').value),
-    foto:      fotoUrl,
-    emoji:     fotoUrl ? '' : '📦'
+    nome:         document.getElementById('epNome').value,
+    descricao:    document.getElementById('epDesc').value,
+    categoria:    document.getElementById('epCat').value,
+    badge:        document.getElementById('epBadge').value || null,
+    preco:        parseFloat(document.getElementById('epPreco').value),
+    estoque:      parseInt(document.getElementById('epEstoque').value),
+    numero_serie: numeroSerieEdit || null,
+    foto:         fotoUrl,
+    emoji:        fotoUrl ? '' : '📦'
   };
   try {
     var { error } = await supabase.from('produtos').update(dados).eq('id', id);
@@ -423,8 +426,7 @@ function comprimirImagem(file, maxWidth, qualidade) {
 
 async function prepararFoto(file) {
   var blob = await comprimirImagem(file, 800, 0.82);
-  var ext = 'webp';
-  var nome = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+  var nome = crypto.randomUUID() + '.webp';
   var up = await supabase.storage.from('produtos').upload(nome, blob, {
     contentType: 'image/webp',
     cacheControl: '31536000'
@@ -459,28 +461,31 @@ window.criarProduto = async function() {
       return;
     }
   }
+  var numeroSerie = document.getElementById('npNumeroSerie').value.trim();
   try {
     var { error } = await supabase.from('produtos').insert({
-      nome:      nome,
-      descricao: document.getElementById('npDesc').value,
-      categoria: document.getElementById('npCat').value,
-      badge:     document.getElementById('npBadge').value || null,
-      preco:     preco,
-      estoque:   estoque,
-      foto:      fotoData,
-      emoji:     fotoData ? '' : '📦',
-      ativo:     true
+      nome:         nome,
+      descricao:    document.getElementById('npDesc').value,
+      categoria:    document.getElementById('npCat').value,
+      badge:        document.getElementById('npBadge').value || null,
+      preco:        preco,
+      estoque:      estoque,
+      numero_serie: numeroSerie || null,
+      foto:         fotoData,
+      emoji:        fotoData ? '' : '📦',
+      ativo:        true
     });
     if (error) throw error;
     document.getElementById('npOk').textContent = 'Produto "' + nome + '" cadastrado!';
-    document.getElementById('npNome').value    = '';
-    document.getElementById('npDesc').value    = '';
-    document.getElementById('npPreco').value   = '';
-    document.getElementById('npEstoque').value = '1';
-    document.getElementById('npFoto').value    = '';
+    document.getElementById('npNome').value         = '';
+    document.getElementById('npDesc').value         = '';
+    document.getElementById('npPreco').value        = '';
+    document.getElementById('npEstoque').value      = '1';
+    document.getElementById('npNumeroSerie').value  = '';
+    document.getElementById('npFoto').value         = '';
     document.getElementById('npFotoPreview').style.display = 'none';
     document.getElementById('npFotoPlaceholder').textContent = '📷 Clique para selecionar uma imagem';
-    document.getElementById('npBadge').value   = '';
+    document.getElementById('npBadge').value        = '';
   } catch(e) { document.getElementById('npErr').textContent = 'Erro ao cadastrar.'; }
 };
 

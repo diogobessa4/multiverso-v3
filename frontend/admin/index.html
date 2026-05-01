@@ -95,6 +95,10 @@
               <div class="fg"><label class="fl">Estoque *</label><input type="number" class="fi" id="npEstoque" placeholder="1" min="0" value="1"/></div>
             </div>
             <div class="fg">
+              <label class="fl">Numero/Volume/Serie <span style="color:var(--muted);font-weight:400">(opcional)</span></label>
+              <input type="text" class="fi" id="npNumeroSerie" placeholder="Ex: 89, Vol.1, Base Set"/>
+            </div>
+            <div class="fg">
               <label class="fl">Foto do Produto</label>
               <div class="img-upload-area" onclick="document.getElementById('npFoto').click()">
                 <div class="img-placeholder" id="npFotoPlaceholder">📷 Clique para selecionar uma imagem</div>
@@ -125,6 +129,10 @@
       <div class="fgrid">
         <div class="fg"><label class="fl">Preco</label><input type="number" class="fi" id="epPreco" step="0.01"/></div>
         <div class="fg"><label class="fl">Estoque</label><input type="number" class="fi" id="epEstoque" min="0"/></div>
+      </div>
+      <div class="fg">
+        <label class="fl">Numero/Volume/Serie <span style="color:var(--muted);font-weight:400">(opcional)</span></label>
+        <input type="text" class="fi" id="epNumeroSerie" placeholder="Ex: 89, Vol.1, Base Set"/>
       </div>
       <div class="fg">
         <label class="fl">Foto do Produto</label>
