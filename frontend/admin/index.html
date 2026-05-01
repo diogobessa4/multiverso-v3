@@ -449,12 +449,13 @@ async function carregarDashboard() {
              '<td>' + escHtml(r.produto_emoji||'') + ' ' + escHtml(r.produto_nome||'') + '</td>' +
              '<td>' + escHtml(r.nome) + '</td>' +
              '<td>' + statusHtml(r.status) + '</td>' +
+             '<td>' + escHtml(String(r.quantidade)) + 'x</td>' +
              '<td style="font-size:.75rem;color:var(--muted)">' + data + '</td></tr>';
     }).join('');
 
     document.getElementById('tRecentes').innerHTML =
-      '<thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>Status</th><th>Data</th></tr></thead>' +
-      '<tbody>' + (rows || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted)">Nenhuma reserva ainda.</td></tr>') + '</tbody>';
+      '<thead><tr><th>Codigo</th><th>Produto</th><th>Cliente</th><th>Status</th><th>Qtd</th><th>Data</th></tr></thead>' +
+      '<tbody>' + (rows || '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--muted)">Nenhuma reserva ainda.</td></tr>') + '</tbody>';
   } catch(e) { console.error(e); }
 }
 
